@@ -36,5 +36,15 @@ services:
       postgres:
         condition: service_healthy
 
+  web:
+    build:
+      context: ./apps/web
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-8000}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+
 volumes:
   postgres-data:
