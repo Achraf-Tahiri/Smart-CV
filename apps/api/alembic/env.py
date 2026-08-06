@@ -7,12 +7,9 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from app import models  # noqa: F401  (enregistre toutes les tables dans Base.metadata)
 from app.core.config import settings
 from app.db.base import Base
-
-# En Phase 1, importer les modèles ici pour alimenter Base.metadata et
-# permettre l'autogénération des migrations :
-#   from app import models  # noqa: F401
 
 config = context.config
 
