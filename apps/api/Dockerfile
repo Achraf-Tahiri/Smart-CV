@@ -14,9 +14,11 @@ WORKDIR /app
 COPY pyproject.toml ./
 RUN uv sync --no-install-project
 
-# 2) Code applicatif + tests.
+# 2) Code applicatif + tests + migrations.
 COPY src ./src
 COPY tests ./tests
+COPY alembic.ini ./
+COPY alembic ./alembic
 
 # 3) Installer le projet lui-même (le package `app`).
 RUN uv sync
