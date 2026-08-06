@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  api:
+    name: API — lint + tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer uv (+ Python géré par uv)
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Installer les dépendances
+        run: uv sync
+      - name: Lint (ruff)
+        run: uv run ruff check src tests
+      - name: Tests (pytest)
+        run: uv run pytest
+
+  web:
+    name: Web — build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Installer les dépendances
+        run: pnpm install --no-frozen-lockfile
+      - name: Build
+        run: pnpm build
