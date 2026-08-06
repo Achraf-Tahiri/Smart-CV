@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     api_port: int = 8000
     version: str = "0.1.0"
 
+    # --- Base de données (PostgreSQL + asyncpg) ---
+    database_url: str = "postgresql+asyncpg://nscv:change-me@localhost:5432/nscv"
+
     @property
     def is_local(self) -> bool:
         """Vrai en environnement de développement local."""

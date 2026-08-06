@@ -1,0 +1,40 @@
+# Stack de développement local — New Smart CV.
+# Démarrage : `docker compose up -d` (ou `make up`).
+# Les valeurs `${VAR:-défaut}` sont lues depuis le fichier .env (sinon défaut).
+name: new-smart-cv
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nscv}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-nscv}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # Scripts joués une seule fois, à la création de la base (extension pgvector).
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nscv} -d ${POSTGRES_DB:-nscv}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./apps/api
+    env_file:
+      - .env
+    environment:
+      # Force l'hôte de la base sur le service Postgres du réseau compose,
+      # quelle que soit la valeur de DATABASE_URL dans .env.
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-nscv}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-nscv}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
