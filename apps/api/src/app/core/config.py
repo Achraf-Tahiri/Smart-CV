@@ -34,6 +34,23 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
+    # --- Stockage fichiers (S3 / MinIO — Phase 1.4) ---
+    s3_endpoint_url: str = "http://minio:9000"  # endpoint interne (réseau docker)
+    # Endpoint PUBLIC pour signer les URLs de téléchargement (joignable par le navigateur).
+    # En dev : http://localhost:9000. Vide => on retombe sur s3_endpoint_url.
+    s3_public_endpoint_url: str = ""
+    s3_access_key: str = "minioadmin"
+    s3_secret_key: str = "minioadmin"
+    s3_bucket: str = "cv-documents"
+    s3_region: str = "us-east-1"
+    s3_use_ssl: bool = False
+    max_upload_mb: int = 20  # taille maximale d'un document uploadé
+
+    @property
+    def s3_signing_endpoint(self) -> str:
+        """Endpoint utilisé pour signer les URLs (public si défini, sinon interne)."""
+        return self.s3_public_endpoint_url or self.s3_endpoint_url
+
     @property
     def is_local(self) -> bool:
         """Vrai en environnement de développement local."""

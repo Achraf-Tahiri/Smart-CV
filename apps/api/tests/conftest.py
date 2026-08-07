@@ -28,6 +28,8 @@ from app.db.session import get_session
 from app.main import create_app
 from app.models.enums import UserRole
 from app.models.user import User
+from app.providers.storage import get_storage
+from app.providers.storage.memory import InMemoryStorageProvider
 from app.schemas.user import UserCreate
 from app.services import users as users_service
 
@@ -101,8 +103,14 @@ async def db_session(db_engine, _clean) -> AsyncIterator[AsyncSession]:
 
 
 @pytest.fixture
-async def client(db_engine, _clean) -> AsyncIterator[AsyncClient]:
-    """Client HTTP async branché sur l'app, avec la session DB pointée sur la base de test."""
+def fake_storage() -> InMemoryStorageProvider:
+    """Stockage en mémoire (pas de MinIO requis en test)."""
+    return InMemoryStorageProvider()
+
+
+@pytest.fixture
+async def client(db_engine, _clean, fake_storage) -> AsyncIterator[AsyncClient]:
+    """Client HTTP async branché sur l'app, avec DB et stockage pointés sur les doubles de test."""
     maker = async_sessionmaker(db_engine, class_=AsyncSession, expire_on_commit=False)
     app = create_app()
 
@@ -111,6 +119,7 @@ async def client(db_engine, _clean) -> AsyncIterator[AsyncClient]:
             yield session
 
     app.dependency_overrides[get_session] = _override_get_session
+    app.dependency_overrides[get_storage] = lambda: fake_storage
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac

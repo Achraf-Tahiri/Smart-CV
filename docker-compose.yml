@@ -22,6 +22,24 @@ services:
       timeout: 5s
       retries: 10
 
+  # Stockage d'objets S3-compatible (fichiers CV).
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minioadmin}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"          # API S3
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"  # console web
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   api:
     build: ./apps/api
     env_file:
@@ -30,10 +48,14 @@ services:
       # Force l'hôte de la base sur le service Postgres du réseau compose,
       # quelle que soit la valeur de DATABASE_URL dans .env.
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-nscv}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-nscv}
+      # Endpoint MinIO interne (réseau compose), quelle que soit la valeur du .env.
+      S3_ENDPOINT_URL: http://minio:9000
     ports:
       - "${API_PORT:-8000}:8000"
     depends_on:
       postgres:
+        condition: service_healthy
+      minio:
         condition: service_healthy
 
   web:
@@ -48,3 +70,4 @@ services:
 
 volumes:
   postgres-data:
+  minio-data:
