@@ -12,6 +12,24 @@ jobs:
     defaults:
       run:
         working-directory: apps/api
+    # Base Postgres (avec pgvector) pour les tests d'intégration.
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: nscv
+          POSTGRES_PASSWORD: change-me
+          POSTGRES_DB: nscv
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U nscv -d nscv"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Les tests dérivent la base de test (nscv_test) de cette URL.
+      DATABASE_URL: postgresql+asyncpg://nscv:change-me@localhost:5432/nscv
     steps:
       - uses: actions/checkout@v4
       - name: Installer uv (+ Python géré par uv)
