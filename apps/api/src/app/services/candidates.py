@@ -8,8 +8,10 @@ import uuid
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.candidate import Candidate
+from app.models.candidate import Candidate, Document
 from app.models.enums import CandidateStatus
+from app.models.experience import Education, Experience, ExtraActivity
+from app.models.skill import CandidateLanguage, CandidateSkill, Skill
 from app.schemas.candidate import CandidateCreate, CandidateUpdate
 
 
@@ -95,3 +97,56 @@ async def update_candidate(
 async def delete_candidate(session: AsyncSession, candidate: Candidate) -> None:
     """Supprime un candidat (les enfants suivent via ON DELETE CASCADE)."""
     await session.delete(candidate)
+
+
+async def get_candidate_children(session: AsyncSession, candidate_id: uuid.UUID) -> dict:
+    """Charge le parcours et les documents d'un candidat (pour la fiche détaillée)."""
+
+    async def _all(stmt):
+        return list((await session.execute(stmt)).scalars().all())
+
+    return {
+        "experiences": await _all(
+            select(Experience)
+            .where(Experience.candidate_id == candidate_id)
+            .order_by(Experience.date_debut.desc().nullslast())
+        ),
+        "educations": await _all(
+            select(Education)
+            .where(Education.candidate_id == candidate_id)
+            .order_by(Education.annee.desc().nullslast())
+        ),
+        "activites_extra": await _all(
+            select(ExtraActivity).where(ExtraActivity.candidate_id == candidate_id)
+        ),
+        "langues": await _all(
+            select(CandidateLanguage).where(CandidateLanguage.candidate_id == candidate_id)
+        ),
+        "skills": await _all(
+            select(Skill)
+            .join(CandidateSkill, CandidateSkill.skill_id == Skill.id)
+            .where(CandidateSkill.candidate_id == candidate_id)
+            .order_by(Skill.type, Skill.name)
+        ),
+        "documents": await _all(select(Document).where(Document.candidate_id == candidate_id)),
+    }
+
+
+async def candidate_stats(session: AsyncSession) -> dict:
+    """Agrégats pour le tableau de bord : total + répartitions."""
+    total = await session.scalar(select(func.count()).select_from(Candidate)) or 0
+
+    async def _group(column):
+        rows = (await session.execute(select(column, func.count()).group_by(column))).all()
+        result: dict[str, int] = {}
+        for key, count in rows:
+            label = key.value if hasattr(key, "value") else (key or "—")
+            result[label] = count
+        return result
+
+    return {
+        "total": total,
+        "by_status": await _group(Candidate.status),
+        "by_secteur": await _group(Candidate.secteur),
+        "by_seniorite": await _group(Candidate.seniorite),
+    }

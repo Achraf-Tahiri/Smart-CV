@@ -138,3 +138,19 @@ async def test_filters_and_pagination(client, make_user):
     assert body["total"] == 3
     assert len(body["items"]) == 2
     assert body["limit"] == 2 and body["offset"] == 0
+
+
+async def test_stats(client, make_user):
+    h = await _headers(client, make_user, UserRole.recruteur)
+    for prenom in ("A", "B"):
+        await client.post(
+            "/api/v1/candidates",
+            json={"prenom": prenom, "secteur": "Informatique / Tech"},
+            headers=h,
+        )
+    resp = await client.get("/api/v1/candidates/stats", headers=h)
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["total"] == 2
+    assert body["by_secteur"].get("Informatique / Tech") == 2
+    assert body["by_status"].get("success") == 2

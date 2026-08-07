@@ -6,11 +6,11 @@ enregistrement pour un email mal formé (l'utilisateur système, lui, a un Email
 """
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from app.models.enums import CandidateStatus, Source
+from app.models.enums import CandidateStatus, SkillType, Source
 
 
 class CandidateBase(BaseModel):
@@ -74,3 +74,86 @@ class CandidateRead(BaseModel):
     source: Source
     created_at: datetime
     updated_at: datetime
+
+
+# --- Schémas imbriqués (fiche détaillée) ---
+
+
+class ExperienceRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    poste: str | None
+    entreprise: str | None
+    date_debut: date | None
+    date_fin: date | None
+    is_current: bool
+    description: str | None
+
+
+class EducationRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    diplome: str | None
+    ecole: str | None
+    annee: int | None
+    description: str | None
+
+
+class ActivityRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    titre: str | None
+    organisation: str | None
+    date_debut: date | None
+    date_fin: date | None
+    is_current: bool
+    description: str | None
+
+
+class SkillRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    name: str
+    type: SkillType
+
+
+class LanguageRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    name: str
+    level: str | None
+
+
+class DocumentRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    filename: str
+    content_type: str | None
+    source: Source
+    created_at: datetime
+
+
+class CandidateDetail(CandidateRead):
+    """Fiche complète : champs du candidat + son parcours et ses documents."""
+
+    experiences: list[ExperienceRead] = []
+    educations: list[EducationRead] = []
+    activites_extra: list[ActivityRead] = []
+    skills: list[SkillRead] = []
+    langues: list[LanguageRead] = []
+    documents: list[DocumentRead] = []
+
+
+class CandidateStats(BaseModel):
+    """Agrégats pour le tableau de bord."""
+
+    total: int
+    by_status: dict[str, int]
+    by_secteur: dict[str, int]
+    by_seniorite: dict[str, int]

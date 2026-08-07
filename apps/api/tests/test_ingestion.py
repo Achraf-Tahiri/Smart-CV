@@ -147,3 +147,20 @@ async def test_process_requires_writer_role(client, make_user):
     headers = await login(client, "lecteur@example.com", pwd)
     resp = await client.post(f"/api/v1/documents/{uuid.uuid4()}/process", headers=headers)
     assert resp.status_code == 403
+
+
+async def test_candidate_detail_exposes_nested_data(app, client, make_user):
+    app.dependency_overrides[get_llm] = lambda: FakeLLMProvider(EXTRACTION)
+    headers = await _recruteur_headers(client, make_user)
+    up = await _upload(client, headers)
+    assert (
+        await client.post(f"/api/v1/documents/{up['document_id']}/process", headers=headers)
+    ).status_code == 200
+
+    detail = await client.get(f"/api/v1/candidates/{up['candidate_id']}", headers=headers)
+    assert detail.status_code == 200
+    body = detail.json()
+    assert len(body["experiences"]) == 1
+    assert len(body["skills"]) == 3
+    assert len(body["langues"]) == 2
+    assert len(body["documents"]) == 1

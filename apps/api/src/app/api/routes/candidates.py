@@ -15,7 +15,13 @@ from app.api.deps import CurrentUser, EmbeddingsDep, SessionDep, require_role
 from app.models.candidate import Candidate
 from app.models.enums import CandidateStatus, UserRole
 from app.models.user import User
-from app.schemas.candidate import CandidateCreate, CandidateRead, CandidateUpdate
+from app.schemas.candidate import (
+    CandidateCreate,
+    CandidateDetail,
+    CandidateRead,
+    CandidateStats,
+    CandidateUpdate,
+)
 from app.schemas.common import Page
 from app.services import audit
 from app.services import candidates as candidates_service
@@ -116,9 +122,19 @@ async def search_candidates(
     )
 
 
-@router.get("/{candidate_id}", response_model=CandidateRead, summary="Détail d'un candidat")
+@router.get("/stats", response_model=CandidateStats, summary="Statistiques (tableau de bord)")
+async def get_stats(session: SessionDep, _user: CurrentUser) -> CandidateStats:
+    return CandidateStats(**await candidates_service.candidate_stats(session))
+
+
+@router.get(
+    "/{candidate_id}", response_model=CandidateDetail, summary="Fiche détaillée d'un candidat"
+)
 async def get_candidate(session: SessionDep, _user: CurrentUser, candidate_id: uuid.UUID):
-    return await _get_or_404(session, candidate_id)
+    candidate = await _get_or_404(session, candidate_id)
+    children = await candidates_service.get_candidate_children(session, candidate_id)
+    base = CandidateRead.model_validate(candidate).model_dump()
+    return CandidateDetail(**base, **children)
 
 
 @router.post(
