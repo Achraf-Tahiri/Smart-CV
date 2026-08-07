@@ -64,6 +64,12 @@ class Settings(BaseSettings):
     # Sous ce nombre de caractères extraits d'un PDF, on bascule en OCR (PDF scanné).
     ocr_min_chars: int = 50
 
+    # --- Embeddings (Phase 2.3) ---
+    # "deterministic" (défaut, sans torch, non sémantique) | "sentence-transformers".
+    embeddings_backend: str = "deterministic"
+    embeddings_model: str = "intfloat/multilingual-e5-base"
+    embeddings_dim: int = 768
+
     @property
     def llm_order(self) -> list[str]:
         """Liste ordonnée des fournisseurs LLM (robuste aux espaces/vides)."""
