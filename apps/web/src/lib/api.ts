@@ -50,6 +50,85 @@ export interface Candidate {
   updated_at: string;
 }
 
+export interface Experience {
+  id: string;
+  poste: string | null;
+  entreprise: string | null;
+  date_debut: string | null;
+  date_fin: string | null;
+  is_current: boolean;
+  description: string | null;
+}
+
+export interface Education {
+  id: string;
+  diplome: string | null;
+  ecole: string | null;
+  annee: number | null;
+  description: string | null;
+}
+
+export interface Activity {
+  id: string;
+  titre: string | null;
+  organisation: string | null;
+  date_debut: string | null;
+  date_fin: string | null;
+  is_current: boolean;
+  description: string | null;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  type: "hard" | "soft";
+}
+
+export interface Language {
+  id: string;
+  name: string;
+  level: string | null;
+}
+
+export interface DocumentRef {
+  id: string;
+  filename: string;
+  content_type: string | null;
+  source: string;
+  created_at: string;
+}
+
+export interface CandidateDetail extends Candidate {
+  experiences: Experience[];
+  educations: Education[];
+  activites_extra: Activity[];
+  skills: Skill[];
+  langues: Language[];
+  documents: DocumentRef[];
+}
+
+export interface Stats {
+  total: number;
+  by_status: Record<string, number>;
+  by_secteur: Record<string, number>;
+  by_seniorite: Record<string, number>;
+}
+
+// Champs modifiables (création / édition manuelle).
+export interface CandidateInput {
+  prenom?: string | null;
+  nom?: string | null;
+  email?: string | null;
+  telephone?: string | null;
+  ville?: string | null;
+  poste_actuel?: string | null;
+  secteur?: string | null;
+  specialite?: string | null;
+  annees_experience?: number;
+  seniorite?: string | null;
+  status?: string;
+}
+
 export interface Page<T> {
   total: number;
   items: T[];
@@ -141,8 +220,34 @@ export function searchCandidates(params: SearchParams): Promise<Page<Candidate>>
   return apiFetch<Page<Candidate>>(`/api/v1/candidates/search?${query.toString()}`);
 }
 
-export function getCandidate(id: string): Promise<Candidate> {
-  return apiFetch<Candidate>(`/api/v1/candidates/${id}`);
+export function getCandidate(id: string): Promise<CandidateDetail> {
+  return apiFetch<CandidateDetail>(`/api/v1/candidates/${id}`);
+}
+
+export function getStats(): Promise<Stats> {
+  return apiFetch<Stats>("/api/v1/candidates/stats");
+}
+
+const JSON_HEADERS = { "Content-Type": "application/json" };
+
+export function createCandidate(data: CandidateInput): Promise<Candidate> {
+  return apiFetch<Candidate>("/api/v1/candidates", {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateCandidate(id: string, data: CandidateInput): Promise<Candidate> {
+  return apiFetch<Candidate>(`/api/v1/candidates/${id}`, {
+    method: "PATCH",
+    headers: JSON_HEADERS,
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteCandidate(id: string): Promise<void> {
+  return apiFetch<void>(`/api/v1/candidates/${id}`, { method: "DELETE" });
 }
 
 // --- Documents ---
@@ -155,4 +260,8 @@ export async function uploadDocument(file: File): Promise<UploadResult> {
 
 export function processDocument(documentId: string): Promise<Candidate> {
   return apiFetch<Candidate>(`/api/v1/documents/${documentId}/process`, { method: "POST" });
+}
+
+export function getDownloadUrl(documentId: string): Promise<{ url: string; expires_in: number }> {
+  return apiFetch(`/api/v1/documents/${documentId}/download-url`);
 }

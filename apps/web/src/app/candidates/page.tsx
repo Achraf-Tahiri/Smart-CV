@@ -5,25 +5,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 
 import { useRequireAuth } from "@/app/providers";
 import { searchCandidates, type Candidate, type Page } from "@/lib/api";
-
-const SECTEURS = [
-  "Informatique / Tech",
-  "Finance / Banque / Assurance",
-  "Marketing / Communication",
-  "Commerce / Vente",
-  "Ressources Humaines",
-  "Industrie / Production",
-  "Santé / Médical",
-  "Éducation / Formation",
-  "Juridique / Legal",
-  "Logistique / Supply Chain",
-  "BTP / Immobilier",
-  "Hôtellerie / Restauration",
-  "Art / Design / Création",
-  "Agriculture / Environnement",
-  "Conseil / Audit",
-  "Autre",
-];
+import { SECTEURS } from "@/lib/constants";
 
 const LIMIT = 10;
 
@@ -80,9 +62,21 @@ export default function CandidatesPage() {
   const offset = data?.offset ?? 0;
   const total = data?.total ?? 0;
 
+  const canWrite = user.role === "admin" || user.role === "recruteur";
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Candidats</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Candidats</h1>
+        {canWrite && (
+          <Link
+            href="/candidates/new"
+            className="rounded bg-gray-900 px-3 py-2 text-sm text-white hover:bg-gray-700"
+          >
+            + Nouveau candidat
+          </Link>
+        )}
+      </div>
 
       <form onSubmit={onSubmit} className="grid grid-cols-1 gap-3 rounded-lg border bg-white p-4 sm:grid-cols-5">
         <input

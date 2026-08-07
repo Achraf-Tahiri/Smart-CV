@@ -22,12 +22,20 @@ export function Nav() {
     <header className="border-b bg-white">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-6">
-          <Link href="/candidates" className="font-bold">
+          <Link href="/dashboard" className="font-bold">
             New Smart CV
+          </Link>
+          <Link href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">
+            Tableau de bord
           </Link>
           <Link href="/candidates" className="text-sm text-gray-600 hover:text-gray-900">
             Candidats
           </Link>
+          {canWrite && (
+            <Link href="/candidates/new" className="text-sm text-gray-600 hover:text-gray-900">
+              Nouveau
+            </Link>
+          )}
           {canWrite && (
             <Link href="/upload" className="text-sm text-gray-600 hover:text-gray-900">
               Importer

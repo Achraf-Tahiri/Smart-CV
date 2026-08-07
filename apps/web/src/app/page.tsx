@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-// Racine : renvoie vers la liste des candidats (qui redirige vers /login si besoin).
+// Racine : renvoie vers le tableau de bord (qui redirige vers /login si besoin).
 export default function Home() {
   const router = useRouter();
   useEffect(() => {
-    router.replace("/candidates");
+    router.replace("/dashboard");
   }, [router]);
   return null;
 }
