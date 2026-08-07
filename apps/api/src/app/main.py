@@ -5,6 +5,7 @@ Expose une fabrique `create_app()` (utilisée par les tests) et une instance
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.api.routes import health
@@ -19,6 +20,16 @@ def create_app() -> FastAPI:
     logger = get_logger("app")
 
     app = FastAPI(title=settings.app_name, version=settings.version)
+
+    # CORS : le front (autre origine, ex. http://localhost:3001) doit pouvoir
+    # appeler l'API depuis le navigateur.
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origin_list,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     # Santé : endpoint racine, non versionné (orchestrateurs / load balancers).
     app.include_router(health.router)

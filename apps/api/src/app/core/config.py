@@ -34,6 +34,14 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
+    # --- CORS (le front est servi sur une autre origine que l'API) ---
+    # Origines autorisées, séparées par des virgules.
+    cors_origins: str = "http://localhost:3001,http://localhost:3000"
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
     # --- Stockage fichiers (S3 / MinIO — Phase 1.4) ---
     s3_endpoint_url: str = "http://minio:9000"  # endpoint interne (réseau docker)
     # Endpoint PUBLIC pour signer les URLs de téléchargement (joignable par le navigateur).
