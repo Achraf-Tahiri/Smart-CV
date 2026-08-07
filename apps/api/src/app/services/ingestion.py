@@ -66,15 +66,7 @@ async def process_document(
         text = await to_thread.run_sync(_extract_text, data, document.filename)
         extraction = await extract_cv(llm, text)
 
-        await _reset_candidate_children(session, candidate.id)
-        _apply_scalar_fields(candidate, extraction)
-        _apply_experience(candidate, extraction)
-        _persist_children(session, candidate.id, extraction)
-        await _persist_children_skills(session, candidate.id, extraction)
-        candidate.search_text = _searchable_text(candidate, extraction)
-        await _persist_embedding(session, candidate, embeddings)
-
-        candidate.raw_extraction = extraction.model_dump()
+        await apply_extraction(session, candidate, extraction, embeddings)
         candidate.status = CandidateStatus.success
         job.status = ImportJobStatus.success
     except (TextExtractionError, LLMError, ValueError) as exc:
@@ -86,6 +78,28 @@ async def process_document(
         await session.flush()
 
     return candidate
+
+
+async def apply_extraction(
+    session: AsyncSession,
+    candidate: Candidate,
+    extraction: CVExtraction,
+    embeddings: EmbeddingProvider,
+) -> None:
+    """Applique une extraction structurée à un candidat : champs + parcours +
+    compétences + langues + embedding (réinitialise d'abord les données dérivées).
+
+    Cœur réutilisable : appelé par le worker (après extraction LLM) ET par la
+    migration des données du POC (extraction déjà connue).
+    """
+    await _reset_candidate_children(session, candidate.id)
+    _apply_scalar_fields(candidate, extraction)
+    _apply_experience(candidate, extraction)
+    _persist_children(session, candidate.id, extraction)
+    await _persist_children_skills(session, candidate.id, extraction)
+    candidate.search_text = _searchable_text(candidate, extraction)
+    await _persist_embedding(session, candidate, embeddings)
+    candidate.raw_extraction = extraction.model_dump()
 
 
 def _extract_text(data: bytes, filename: str) -> str:
@@ -104,15 +118,24 @@ async def _reset_candidate_children(session: AsyncSession, candidate_id: uuid.UU
     )
 
 
+def _clip(value: str | None, length: int) -> str | None:
+    """Borne une chaîne à la taille de la colonne (robustesse : le LLM ou le POC
+    peuvent renvoyer des valeurs anormalement longues). Vide -> None."""
+    if value is None:
+        return None
+    value = value.strip()
+    return value[:length] if value else None
+
+
 def _apply_scalar_fields(candidate: Candidate, ex: CVExtraction) -> None:
-    candidate.prenom = format_title(ex.prenom) or None
-    candidate.nom = format_title(ex.nom) or None
-    candidate.email = ex.email
-    candidate.telephone = ex.telephone
-    candidate.ville = normalize_city(ex.ville) or None
-    candidate.poste_actuel = format_title(ex.poste_actuel) or None
-    candidate.secteur = ex.secteur
-    candidate.specialite = ex.specialite
+    candidate.prenom = _clip(format_title(ex.prenom), 255)
+    candidate.nom = _clip(format_title(ex.nom), 255)
+    candidate.email = _clip(ex.email, 255)
+    candidate.telephone = _clip(ex.telephone, 50)
+    candidate.ville = _clip(normalize_city(ex.ville), 255)
+    candidate.poste_actuel = _clip(format_title(ex.poste_actuel), 255)
+    candidate.secteur = ex.secteur  # issu de la taxonomie, taille sûre
+    candidate.specialite = _clip(ex.specialite, 255)
 
 
 def _apply_experience(candidate: Candidate, ex: CVExtraction) -> None:
@@ -131,8 +154,8 @@ def _persist_children(session: AsyncSession, candidate_id: uuid.UUID, ex: CVExtr
         session.add(
             Experience(
                 candidate_id=candidate_id,
-                poste=e.poste,
-                entreprise=e.entreprise,
+                poste=_clip(e.poste, 255),
+                entreprise=_clip(e.entreprise, 255),
                 date_debut=period.start if period else None,
                 date_fin=(
                     None if (period and period.is_present) else (period.end if period else None)
@@ -145,8 +168,8 @@ def _persist_children(session: AsyncSession, candidate_id: uuid.UUID, ex: CVExtr
         session.add(
             Education(
                 candidate_id=candidate_id,
-                diplome=f.diplome,
-                ecole=f.ecole,
+                diplome=_clip(f.diplome, 255),
+                ecole=_clip(f.ecole, 255),
                 annee=_parse_year(f.annee),
             )
         )
@@ -157,8 +180,8 @@ def _persist_children(session: AsyncSession, candidate_id: uuid.UUID, ex: CVExtr
         session.add(
             ExtraActivity(
                 candidate_id=candidate_id,
-                titre=a.titre,
-                organisation=a.organisation,
+                titre=_clip(a.titre, 255),
+                organisation=_clip(a.organisation, 255),
                 date_debut=period.start if period else None,
                 date_fin=(
                     None if (period and period.is_present) else (period.end if period else None)
@@ -167,9 +190,12 @@ def _persist_children(session: AsyncSession, candidate_id: uuid.UUID, ex: CVExtr
                 description=a.description,
             )
         )
-    for name, level in (_parse_language(s) for s in ex.langues):
+    for raw_name, raw_level in (_parse_language(s) for s in ex.langues):
+        name = _clip(raw_name, 100)
         if name:
-            session.add(CandidateLanguage(candidate_id=candidate_id, name=name, level=level))
+            session.add(
+                CandidateLanguage(candidate_id=candidate_id, name=name, level=_clip(raw_level, 50))
+            )
 
 
 async def _persist_children_skills(
@@ -180,7 +206,10 @@ async def _persist_children_skills(
         (name, SkillType.soft) for name in normalize_skills(ex.soft_skills)
     ]
     for name, skill_type in wanted:
-        skill = await _get_or_create_skill(session, name, skill_type)
+        clipped = _clip(name, 255)
+        if not clipped:
+            continue
+        skill = await _get_or_create_skill(session, clipped, skill_type)
         session.add(CandidateSkill(candidate_id=candidate_id, skill_id=skill.id))
 
 

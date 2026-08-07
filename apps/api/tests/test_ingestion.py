@@ -179,3 +179,20 @@ async def test_process_requires_writer_role(client, make_user):
     headers = await login(client, "lecteur@example.com", pwd)
     resp = await client.post(f"/api/v1/documents/{uuid.uuid4()}/process", headers=headers)
     assert resp.status_code == 403
+
+
+async def test_apply_extraction_clips_overlong_values(db_session):
+    """Des valeurs anormalement longues (LLM/POC) ne doivent pas casser l'insertion."""
+    from app.models.candidate import Candidate
+    from app.models.enums import Source
+    from app.schemas.extraction import CVExtraction
+
+    candidate = Candidate(id=uuid.uuid4(), source=Source.local)
+    db_session.add(candidate)
+    await db_session.flush()
+
+    extraction = CVExtraction(langues=["X" * 200], hard_skills=["Y" * 300], prenom="Z" * 400)
+    await ingestion.apply_extraction(db_session, candidate, extraction, _EMB)
+    await db_session.commit()  # ne doit PAS lever (colonnes VARCHAR bornées)
+
+    assert candidate.prenom is not None and len(candidate.prenom) <= 255
