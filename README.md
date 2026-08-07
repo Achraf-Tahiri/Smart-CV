@@ -66,6 +66,18 @@ docker compose run --rm --no-deps -T api uv run --frozen \
 `HF_API_TOKEN`) dans `.env`. Sans clé, l'import stocke le CV mais laisse le candidat
 en statut `manual_review`. Embeddings sémantiques réels : `EMBEDDINGS_BACKEND=sentence-transformers`.
 
+### Peupler avec les données du POC (optionnel)
+
+Importe les CV déjà analysés par le POC (SQLite → Postgres, sans IA) :
+
+```bash
+docker compose run --rm --no-deps -T \
+  -v "/chemin/vers/Smart_CV/data:/poc:ro" \
+  api uv run --frozen python -m app.scripts.migrate_poc --sqlite /poc/cv_database.db
+```
+
+Idempotent (relançable sans doublon), lecture seule côté POC.
+
 ## Vérifications (dans Docker)
 
 ```bash
