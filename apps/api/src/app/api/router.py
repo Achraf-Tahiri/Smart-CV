@@ -2,9 +2,10 @@
 
 from fastapi import APIRouter
 
-from app.api.routes import auth, candidates, documents
+from app.api.routes import audit_logs, auth, candidates, documents
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth")
 api_router.include_router(candidates.router, prefix="/candidates")
 api_router.include_router(documents.router, prefix="/documents")
+api_router.include_router(audit_logs.router, prefix="/audit-logs")

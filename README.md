@@ -2,7 +2,7 @@
 
 Application de gestion et de recherche de CV pour le recrutement — réécriture **production** du POC *Smart CV*.
 
-> **Statut : MVP complet ✅** — Phases 0 à 2 (backend) + front. Auth JWT & rôles, CRUD candidats, upload + stockage MinIO, extraction IA structurée (cascade LLM), OCR, embeddings, pipeline d'ingestion, recherche hybride (plein-texte + vecteurs), et un front Next.js (login, recherche, fiche, import). 89 tests back.
+> **Statut : MVP complet ✅ + ingestion asynchrone.** Phases 0 à 2 (backend) + front + worker (Phase 3a). Auth JWT & rôles, CRUD candidats, upload + stockage MinIO, extraction IA structurée (cascade LLM), OCR, embeddings, **pipeline d'ingestion asynchrone** (worker Arq/Redis), recherche hybride (plein-texte + vecteurs), et un front Next.js complet (login, tableau de bord, recherche, fiche riche, création/édition, import). 94 tests back.
 
 ## Stack
 
@@ -88,7 +88,8 @@ Toutes les variables sont documentées dans `.env.example`. Le fichier `.env` r�
 | 1 | Modèle de données + migrations, auth + rôles, CRUD candidats, upload MinIO | ✅ |
 | 2 | IA : extraction structurée, OCR, embeddings, recherche hybride | ✅ |
 | — | Front MVP : login, recherche, fiche, import | ✅ |
-| 3 | Intégrations & jobs : Google Drive async (Arq/Redis), imports en masse | à venir |
+| 3a | File de jobs async (worker Arq/Redis) — ingestion non bloquante | ✅ |
+| 3b | Google Drive async, imports en masse | à venir |
 | 4 | Produit : dashboard, édition, export, polish UI (shadcn/TanStack) | à venir |
 | 5 | Sécurité & RGPD (rétention, effacement, durcissement) | à venir |
 | 6 | Production : déploiement cloud, tests de charge, documentation client | à venir |

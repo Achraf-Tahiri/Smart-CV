@@ -4,7 +4,9 @@ Expose une fabrique `create_app()` (utilisée par les tests) et une instance
 `app` au niveau module (utilisée par uvicorn : `uvicorn app.main:app`).
 """
 
-from fastapi import FastAPI
+from collections.abc import Awaitable, Callable
+
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
@@ -30,6 +32,17 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # En-têtes de sécurité sur toutes les réponses (défense en profondeur).
+    @app.middleware("http")
+    async def security_headers(
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        response = await call_next(request)
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "no-referrer")
+        return response
 
     # Santé : endpoint racine, non versionné (orchestrateurs / load balancers).
     app.include_router(health.router)

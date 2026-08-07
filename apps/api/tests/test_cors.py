@@ -15,3 +15,10 @@ async def test_cors_omits_unknown_origin(client):
     resp = await client.get("/health", headers={"Origin": "http://evil.example"})
     # Origine non autorisée -> pas d'en-tête permissif renvoyé.
     assert resp.headers.get("access-control-allow-origin") != "http://evil.example"
+
+
+async def test_security_headers_present(client):
+    resp = await client.get("/health")
+    assert resp.headers.get("x-content-type-options") == "nosniff"
+    assert resp.headers.get("x-frame-options") == "DENY"
+    assert resp.headers.get("referrer-policy") == "no-referrer"
