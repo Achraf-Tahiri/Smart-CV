@@ -46,6 +46,23 @@ class Settings(BaseSettings):
     s3_use_ssl: bool = False
     max_upload_mb: int = 20  # taille maximale d'un document uploadé
 
+    # --- Fournisseurs LLM (Phase 2.2) ---
+    llm_provider_order: str = "groq,gemini,hf"  # ordre de la cascade
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.3-70b-versatile"
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-1.5-flash"
+    hf_api_token: str = ""
+    hf_model: str = "meta-llama/Llama-3.1-8B-Instruct"
+    llm_timeout_seconds: float = 60.0
+    # Longueur max du texte de CV envoyé au LLM (le POC tronquait à 4000 : trop court).
+    llm_max_input_chars: int = 20000
+
+    @property
+    def llm_order(self) -> list[str]:
+        """Liste ordonnée des fournisseurs LLM (robuste aux espaces/vides)."""
+        return [p.strip().lower() for p in self.llm_provider_order.split(",") if p.strip()]
+
     @property
     def s3_signing_endpoint(self) -> str:
         """Endpoint utilisé pour signer les URLs (public si défini, sinon interne)."""

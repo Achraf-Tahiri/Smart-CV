@@ -13,6 +13,7 @@ from app.core.security import decode_access_token
 from app.db.session import get_session
 from app.models.enums import UserRole
 from app.models.user import User
+from app.providers.llm import LLMProvider, get_llm
 from app.providers.storage import StorageProvider, get_storage
 from app.services import users as users_service
 
@@ -21,6 +22,9 @@ SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 # Stockage d'objets (S3/MinIO) injecté par requête.
 StorageDep = Annotated[StorageProvider, Depends(get_storage)]
+
+# Fournisseur LLM (cascade) injecté par requête.
+LLMDep = Annotated[LLMProvider, Depends(get_llm)]
 
 # Schéma OAuth2 « password » : Swagger affiche un bouton « Authorize ».
 # tokenUrl doit pointer vers l'endpoint de login (chemin complet, sans slash initial).
