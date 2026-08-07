@@ -55,11 +55,13 @@ async def _prepare_database() -> None:
     finally:
         await admin_engine.dispose()
 
-    # 2) Dans la base de test : extension vecteur + schéma.
+    # 2) Dans la base de test : extension vecteur + schéma neuf (drop+create pour
+    #    refléter les modèles courants, y compris les changements de colonnes).
     engine = create_async_engine(TEST_DATABASE_URL, poolclass=NullPool)
     try:
         async with engine.begin() as conn:
             await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+            await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
     finally:
         await engine.dispose()

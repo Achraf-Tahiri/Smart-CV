@@ -2,9 +2,9 @@
 
 import uuid
 
-from sqlalchemy import BigInteger, Float, ForeignKey, String
+from sqlalchemy import BigInteger, Computed, Float, ForeignKey, Index, String, Text
 from sqlalchemy import Enum as SAEnum
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, TimestampMixin, UUIDPrimaryKey
@@ -13,6 +13,10 @@ from app.models.enums import CandidateStatus, Source
 
 class Candidate(UUIDPrimaryKey, TimestampMixin, Base):
     __tablename__ = "candidates"
+    # Index plein-texte (recherche hybride, Phase 2.4).
+    __table_args__ = (
+        Index("ix_candidates_search_vector", "search_vector", postgresql_using="gin"),
+    )
 
     prenom: Mapped[str | None] = mapped_column(String(255))
     nom: Mapped[str | None] = mapped_column(String(255))
@@ -39,6 +43,13 @@ class Candidate(UUIDPrimaryKey, TimestampMixin, Base):
     raw_extraction: Mapped[dict | None] = mapped_column(JSONB)
     created_by_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL")
+    )
+    # Texte concaténé pour la recherche plein-texte (rempli à l'ingestion) et
+    # tsvector généré (indexé, GIN) — recherche hybride Phase 2.4.
+    search_text: Mapped[str | None] = mapped_column(Text)
+    search_vector: Mapped[str | None] = mapped_column(
+        TSVECTOR,
+        Computed("to_tsvector('french', coalesce(search_text, ''))", persisted=True),
     )
 
 

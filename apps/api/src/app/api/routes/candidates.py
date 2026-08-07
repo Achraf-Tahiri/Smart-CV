@@ -11,7 +11,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
-from app.api.deps import CurrentUser, SessionDep, require_role
+from app.api.deps import CurrentUser, EmbeddingsDep, SessionDep, require_role
 from app.models.candidate import Candidate
 from app.models.enums import CandidateStatus, UserRole
 from app.models.user import User
@@ -19,6 +19,7 @@ from app.schemas.candidate import CandidateCreate, CandidateRead, CandidateUpdat
 from app.schemas.common import Page
 from app.services import audit
 from app.services import candidates as candidates_service
+from app.services import search as search_service
 
 router = APIRouter(tags=["candidates"])
 
@@ -55,6 +56,48 @@ async def list_candidates(
 ) -> Page[CandidateRead]:
     total, items = await candidates_service.list_candidates(
         session,
+        q=q,
+        secteur=secteur,
+        ville=ville,
+        seniorite=seniorite,
+        status=status_,
+        min_experience=min_experience,
+        max_experience=max_experience,
+        limit=limit,
+        offset=offset,
+    )
+    return Page(
+        total=total,
+        items=[CandidateRead.model_validate(c) for c in items],
+        limit=limit,
+        offset=offset,
+    )
+
+
+@router.get(
+    "/search",
+    response_model=Page[CandidateRead],
+    summary="Recherche hybride (plein-texte + sémantique) + filtres",
+)
+async def search_candidates(
+    session: SessionDep,
+    embeddings: EmbeddingsDep,
+    _user: CurrentUser,
+    q: Annotated[
+        str | None, Query(description="Requête libre (mots-clés, poste, compétence...).")
+    ] = None,
+    secteur: str | None = None,
+    ville: str | None = None,
+    seniorite: str | None = None,
+    status_: Annotated[CandidateStatus | None, Query(alias="status")] = None,
+    min_experience: Annotated[float | None, Query(ge=0)] = None,
+    max_experience: Annotated[float | None, Query(ge=0)] = None,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    offset: Annotated[int, Query(ge=0)] = 0,
+) -> Page[CandidateRead]:
+    total, items = await search_service.hybrid_search(
+        session,
+        embeddings,
         q=q,
         secteur=secteur,
         ville=ville,

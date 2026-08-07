@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import DateTime, ForeignKey, String, func
+from sqlalchemy import DateTime, ForeignKey, Index, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -15,6 +15,15 @@ EMBEDDING_DIM = 768
 
 class CandidateEmbedding(Base):
     __tablename__ = "candidate_embeddings"
+    # Index vectoriel HNSW pour la distance cosinus (recherche sémantique).
+    __table_args__ = (
+        Index(
+            "ix_candidate_embeddings_hnsw",
+            "embedding",
+            postgresql_using="hnsw",
+            postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+    )
 
     candidate_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("candidates.id", ondelete="CASCADE"), primary_key=True

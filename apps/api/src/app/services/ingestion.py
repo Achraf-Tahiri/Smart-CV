@@ -71,7 +71,8 @@ async def process_document(
         _apply_experience(candidate, extraction)
         _persist_children(session, candidate.id, extraction)
         await _persist_children_skills(session, candidate.id, extraction)
-        await _persist_embedding(session, candidate, extraction, embeddings)
+        candidate.search_text = _searchable_text(candidate, extraction)
+        await _persist_embedding(session, candidate, embeddings)
 
         candidate.raw_extraction = extraction.model_dump()
         candidate.status = CandidateStatus.success
@@ -198,15 +199,14 @@ async def _get_or_create_skill(session: AsyncSession, name: str, skill_type: Ski
 async def _persist_embedding(
     session: AsyncSession,
     candidate: Candidate,
-    ex: CVExtraction,
     embeddings: EmbeddingProvider,
 ) -> None:
-    vector = (await embeddings.embed_documents([_searchable_text(candidate, ex)]))[0]
+    vector = (await embeddings.embed_documents([candidate.search_text or ""]))[0]
     session.add(
         CandidateEmbedding(
             candidate_id=candidate.id,
             embedding=vector,
-            model_name=f"{embeddings.__class__.__name__}",
+            model_name=embeddings.__class__.__name__,
         )
     )
 
