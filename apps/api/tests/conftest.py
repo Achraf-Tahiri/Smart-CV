@@ -15,6 +15,7 @@ import asyncio
 from collections.abc import AsyncIterator, Awaitable, Callable
 
 import pytest
+from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.engine import make_url
@@ -109,17 +110,27 @@ def fake_storage() -> InMemoryStorageProvider:
 
 
 @pytest.fixture
-async def client(db_engine, _clean, fake_storage) -> AsyncIterator[AsyncClient]:
-    """Client HTTP async branché sur l'app, avec DB et stockage pointés sur les doubles de test."""
+async def app(db_engine, _clean, fake_storage) -> FastAPI:
+    """Application FastAPI de test (DB + stockage pointés sur les doubles).
+
+    Les tests peuvent surcharger d'autres dépendances (ex. get_llm) via
+    `app.dependency_overrides` avant d'émettre des requêtes.
+    """
     maker = async_sessionmaker(db_engine, class_=AsyncSession, expire_on_commit=False)
-    app = create_app()
+    application = create_app()
 
     async def _override_get_session() -> AsyncIterator[AsyncSession]:
         async with maker() as session:
             yield session
 
-    app.dependency_overrides[get_session] = _override_get_session
-    app.dependency_overrides[get_storage] = lambda: fake_storage
+    application.dependency_overrides[get_session] = _override_get_session
+    application.dependency_overrides[get_storage] = lambda: fake_storage
+    return application
+
+
+@pytest.fixture
+async def client(app: FastAPI) -> AsyncIterator[AsyncClient]:
+    """Client HTTP async branché sur l'app de test."""
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac

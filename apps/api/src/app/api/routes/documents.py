@@ -11,13 +11,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile, status
 
-from app.api.deps import CurrentUser, SessionDep, StorageDep, require_role
+from app.api.deps import CurrentUser, EmbeddingsDep, LLMDep, SessionDep, StorageDep, require_role
 from app.core.config import settings
 from app.models.candidate import Document
 from app.models.enums import Source, UserRole
 from app.models.user import User
+from app.schemas.candidate import CandidateRead
 from app.schemas.document import DocumentUploadResult, DownloadUrl
-from app.services import audit
+from app.services import audit, ingestion
 from app.services import documents as documents_service
 
 router = APIRouter(tags=["documents"])
@@ -87,6 +88,45 @@ async def upload_document(
         file_hash=document.file_hash or "",
         deduplicated=not created,
     )
+
+
+@router.post(
+    "/{document_id}/process",
+    response_model=CandidateRead,
+    summary="Traiter un document (extraction IA -> candidat structuré)",
+)
+async def process_document(
+    request: Request,
+    document_id: uuid.UUID,
+    session: SessionDep,
+    storage: StorageDep,
+    llm: LLMDep,
+    embeddings: EmbeddingsDep,
+    current_user: WriterUser,
+):
+    """Lance le pipeline d'ingestion (synchrone en V1 ; passera en file de jobs
+    en Phase 3). Le candidat renvoyé porte le statut du traitement (`success`
+    ou `manual_review` en cas d'échec d'extraction).
+    """
+    document = await session.get(Document, document_id)
+    if document is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document introuvable.")
+
+    candidate = await ingestion.process_document(
+        session, document=document, llm=llm, embeddings=embeddings, storage=storage
+    )
+    await audit.record(
+        session,
+        action="document.process",
+        user_id=current_user.id,
+        entity_type="candidate",
+        entity_id=candidate.id,
+        details={"status": candidate.status.value},
+        ip_address=request.client.host if request.client else None,
+    )
+    await session.commit()
+    await session.refresh(candidate)
+    return candidate
 
 
 @router.get(
