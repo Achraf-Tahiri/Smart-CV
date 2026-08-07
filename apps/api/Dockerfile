@@ -5,6 +5,12 @@ FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
+# Paquets système : OCR Tesseract (FR + EN), poppler (PDF scannés -> images),
+# et une police (tests OCR déterministes).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    tesseract-ocr tesseract-ocr-fra tesseract-ocr-eng poppler-utils fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
+
 # uv : gestionnaire de paquets Python rapide (version figée = builds reproductibles).
 RUN pip install --no-cache-dir uv==0.12.2
 

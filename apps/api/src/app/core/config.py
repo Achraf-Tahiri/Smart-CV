@@ -58,6 +58,12 @@ class Settings(BaseSettings):
     # Longueur max du texte de CV envoyé au LLM (le POC tronquait à 4000 : trop court).
     llm_max_input_chars: int = 20000
 
+    # --- Extraction de texte / OCR (Phase 2.3) ---
+    tesseract_lang: str = "fra+eng"
+    ocr_dpi: int = 300
+    # Sous ce nombre de caractères extraits d'un PDF, on bascule en OCR (PDF scanné).
+    ocr_min_chars: int = 50
+
     @property
     def llm_order(self) -> list[str]:
         """Liste ordonnée des fournisseurs LLM (robuste aux espaces/vides)."""
