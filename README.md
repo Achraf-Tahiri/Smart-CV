@@ -2,7 +2,7 @@
 
 Application de gestion et de recherche de CV pour le recrutement — réécriture **production** du POC *Smart CV*.
 
-> **Statut : Phase 0 (fondations) — en cours.** L'arborescence est en place ; l'API, la base de données et le front sont câblés incrément par incrément (0.2 → 0.6).
+> **Statut : MVP complet ✅** — Phases 0 à 2 (backend) + front. Auth JWT & rôles, CRUD candidats, upload + stockage MinIO, extraction IA structurée (cascade LLM), OCR, embeddings, pipeline d'ingestion, recherche hybride (plein-texte + vecteurs), et un front Next.js (login, recherche, fiche, import). 89 tests back.
 
 ## Stack
 
@@ -21,10 +21,11 @@ apps/
     src/app/
       core/                config, logging, sécurité
       db/                  session + base SQLAlchemy
-      models/              tables ORM (Phase 1)
+      models/              tables ORM
       schemas/             DTO Pydantic v2
-      api/routes/          endpoints HTTP
-      services/            metier porte du POC (dates, experience, taxonomies)
+      api/routes/          endpoints HTTP (auth, candidates, documents)
+      domain/              logique métier PURE portée du POC (dates, expérience, taxonomies, nettoyage)
+      services/            orchestration (auth, candidats, documents, extraction, ingestion, recherche)
       providers/           abstractions : llm · embeddings · storage · drive
     alembic/               migrations
     tests/                 pytest
@@ -44,11 +45,36 @@ docker-compose.yml         stack locale
 ## Démarrage rapide
 
 ```bash
-cp .env.example .env      # puis renseigner les valeurs
-make up                   # disponible à partir de la Phase 0.3
+cp .env.example .env                        # ajuster si besoin (ports, clés API)
+docker compose build                        # api (OCR inclus) + web
+docker compose up -d                        # postgres + minio + api + web
+
+# Migrer la base et créer l'administrateur initial :
+docker compose run --rm --no-deps -T api uv run --frozen alembic upgrade head
+docker compose run --rm --no-deps -T api uv run --frozen \
+  python -m app.scripts.create_admin --email admin@example.com --password 'password123'
 ```
 
-`make help` liste les raccourcis.
+- **Front** : http://localhost:3001 (login, recherche, fiche, import)
+- **API / docs** : http://localhost:8001/docs
+- **Console MinIO** : http://localhost:9001 (`minioadmin` / `minioadmin`)
+
+> Les ports par défaut 3000 et 8000 étant souvent déjà pris, ce projet utilise
+> `WEB_PORT=3001` et `API_PORT=8001` (configurables dans `.env`).
+
+**Extraction IA réelle** : renseigner une clé `GROQ_API_KEY` (ou `GEMINI_API_KEY` /
+`HF_API_TOKEN`) dans `.env`. Sans clé, l'import stocke le CV mais laisse le candidat
+en statut `manual_review`. Embeddings sémantiques réels : `EMBEDDINGS_BACKEND=sentence-transformers`.
+
+## Vérifications (dans Docker)
+
+```bash
+# Lint + format + tests (monter la source pour refléter le code courant) :
+docker compose up -d postgres
+docker compose run --rm --no-deps -T \
+  -v "$PWD/apps/api/src:/app/src" -v "$PWD/apps/api/tests:/app/tests" \
+  api uv run pytest
+```
 
 ## Configuration
 
@@ -56,12 +82,13 @@ Toutes les variables sont documentées dans `.env.example`. Le fichier `.env` r�
 
 ## Feuille de route
 
-| Phase | Contenu |
-|-------|---------|
-| 0 | Fondations : mono-repo, Docker Compose, healthcheck, CI |
-| 1 | Modèle de données + migrations, auth + rôles, CRUD candidats, upload MinIO |
-| 2 | IA : extraction structurée, embeddings, recherche hybride |
-| 3 | Intégrations & jobs : Google Drive async, imports en masse |
-| 4 | Produit : dashboard, fiche candidat, édition, export |
-| 5 | Sécurité & RGPD |
-| 6 | Production : déploiement cloud, tests de charge, documentation |
+| Phase | Contenu | Statut |
+|-------|---------|--------|
+| 0 | Fondations : mono-repo, Docker Compose, healthcheck, CI | ✅ |
+| 1 | Modèle de données + migrations, auth + rôles, CRUD candidats, upload MinIO | ✅ |
+| 2 | IA : extraction structurée, OCR, embeddings, recherche hybride | ✅ |
+| — | Front MVP : login, recherche, fiche, import | ✅ |
+| 3 | Intégrations & jobs : Google Drive async (Arq/Redis), imports en masse | à venir |
+| 4 | Produit : dashboard, édition, export, polish UI (shadcn/TanStack) | à venir |
+| 5 | Sécurité & RGPD (rétention, effacement, durcissement) | à venir |
+| 6 | Production : déploiement cloud, tests de charge, documentation client | à venir |
