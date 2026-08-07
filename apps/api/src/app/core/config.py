@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     # Origines autorisées, séparées par des virgules.
     cors_origins: str = "http://localhost:3001,http://localhost:3000"
 
+    # --- Anti-brute-force sur le login (Phase 5b) ---
+    login_max_attempts: int = 10  # échecs tolérés par IP avant blocage temporaire
+    login_window_seconds: int = 300  # fenêtre de comptage (5 min)
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

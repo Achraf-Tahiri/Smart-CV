@@ -24,6 +24,7 @@ from sqlalchemy.pool import NullPool
 
 from app import models  # noqa: F401  (enregistre toutes les tables dans Base.metadata)
 from app.core.config import settings
+from app.core.ratelimit import InMemoryRateLimiter, get_login_rate_limiter
 from app.db.base import Base
 from app.db.session import get_session
 from app.main import create_app
@@ -127,6 +128,8 @@ async def app(db_engine, _clean, fake_storage) -> FastAPI:
 
     application.dependency_overrides[get_session] = _override_get_session
     application.dependency_overrides[get_storage] = lambda: fake_storage
+    # Limiteur de login généreux par défaut (pas de Redis en test, pas de blocage).
+    application.dependency_overrides[get_login_rate_limiter] = lambda: InMemoryRateLimiter(10_000)
     return application
 
 

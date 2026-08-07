@@ -110,3 +110,23 @@ def test_require_role_forbids_other_roles():
     with pytest.raises(HTTPException) as exc:
         checker(lecteur)
     assert exc.value.status_code == 403
+
+
+async def test_login_rate_limited_after_too_many_failures(app, client, make_user):
+    from app.core.ratelimit import InMemoryRateLimiter, get_login_rate_limiter
+
+    limiter = InMemoryRateLimiter(max_attempts=3)  # instance partagée entre les requêtes
+    app.dependency_overrides[get_login_rate_limiter] = lambda: limiter
+    await make_user(email="rl@example.com", password="password123")
+
+    for _ in range(3):
+        resp = await client.post(
+            "/api/v1/auth/login", data={"username": "rl@example.com", "password": "faux"}
+        )
+        assert resp.status_code == 401
+
+    # Bloqué ensuite, même avec le bon mot de passe.
+    blocked = await client.post(
+        "/api/v1/auth/login", data={"username": "rl@example.com", "password": "password123"}
+    )
+    assert blocked.status_code == 429
