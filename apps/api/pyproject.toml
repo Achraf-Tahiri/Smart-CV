@@ -19,6 +19,8 @@ dependencies = [
     "argon2-cffi>=23.1",          # hachage de mot de passe (Argon2id)
     "pyjwt>=2.9",                 # émission / vérification des JWT
     "python-multipart>=0.0.12",   # formulaires (OAuth2 password flow) + upload
+    # --- File de jobs async (Phase 3) ---
+    "arq>=0.26",                  # file de tâches asynchrone (Redis)
     # --- Stockage fichiers (Phase 1.4) ---
     "boto3>=1.35",                # client S3-compatible (MinIO en local, S3/GCS en cloud)
     # --- Extraction de texte / OCR (Phase 2.3) ---

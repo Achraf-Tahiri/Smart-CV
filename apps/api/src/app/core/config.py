@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     # --- Base de données (PostgreSQL + asyncpg) ---
     database_url: str = "postgresql+asyncpg://nscv:change-me@localhost:5432/nscv"
 
+    # --- File de jobs (Redis / Arq — Phase 3) ---
+    redis_url: str = "redis://redis:6379/0"
+
     # --- Authentification JWT (Phase 1.2) ---
     # ⚠️ En production, JWT_SECRET_KEY DOIT être une longue chaîne aléatoire secrète.
     jwt_secret_key: str = "change-me-utiliser-une-longue-chaine-aleatoire"

@@ -3,6 +3,24 @@
 # Les valeurs `${VAR:-défaut}` sont lues depuis le fichier .env (sinon défaut).
 name: new-smart-cv
 
+# Config commune à l'API et au worker (même image, mêmes accès DB/MinIO/Redis).
+x-api-base: &api-base
+  build: ./apps/api
+  env_file:
+    - .env
+  environment:
+    # Forcés sur les services du réseau compose, quelle que soit la valeur du .env.
+    DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-nscv}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-nscv}
+    S3_ENDPOINT_URL: http://minio:9000
+    REDIS_URL: redis://redis:6379/0
+  depends_on:
+    postgres:
+      condition: service_healthy
+    minio:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
 services:
   postgres:
     image: pgvector/pgvector:pg16
@@ -40,23 +58,26 @@ services:
       timeout: 5s
       retries: 10
 
+  # File de jobs (traitement asynchrone des CV).
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api:
-    build: ./apps/api
-    env_file:
-      - .env
-    environment:
-      # Force l'hôte de la base sur le service Postgres du réseau compose,
-      # quelle que soit la valeur de DATABASE_URL dans .env.
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-nscv}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-nscv}
-      # Endpoint MinIO interne (réseau compose), quelle que soit la valeur du .env.
-      S3_ENDPOINT_URL: http://minio:9000
+    <<: *api-base
     ports:
       - "${API_PORT:-8000}:8000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
+
+  # Worker Arq : consomme la file et exécute le pipeline d'ingestion.
+  worker:
+    <<: *api-base
+    command: ["arq", "app.worker.WorkerSettings"]
 
   web:
     build:

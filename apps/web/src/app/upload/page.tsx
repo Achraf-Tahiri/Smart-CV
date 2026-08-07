@@ -4,7 +4,19 @@ import Link from "next/link";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 
 import { useRequireAuth } from "@/app/providers";
-import { processDocument, uploadDocument, type Candidate } from "@/lib/api";
+import { getCandidate, processDocument, uploadDocument, type Candidate } from "@/lib/api";
+
+const TERMINAL = ["success", "manual_review", "failed"];
+
+// Le traitement est asynchrone (worker) : on suit le statut du candidat.
+async function pollUntilDone(candidateId: string): Promise<Candidate> {
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const candidate = await getCandidate(candidateId);
+    if (TERMINAL.includes(candidate.status)) return candidate;
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+  throw new Error("Traitement toujours en cours (délai dépassé). Réessaie plus tard.");
+}
 
 export default function UploadPage() {
   const { user } = useRequireAuth();
@@ -29,10 +41,10 @@ export default function UploadPage() {
     try {
       setStatus("Import du fichier…");
       const uploaded = await uploadDocument(file);
-      setStatus(
-        uploaded.deduplicated ? "Fichier déjà connu — retraitement…" : "Extraction IA en cours…",
-      );
-      const candidate = await processDocument(uploaded.document_id);
+      setStatus("Mise en file de traitement…");
+      await processDocument(uploaded.document_id);
+      setStatus("Analyse IA en cours (cela peut prendre quelques instants)…");
+      const candidate = await pollUntilDone(uploaded.candidate_id);
       setResult(candidate);
       setStatus(null);
     } catch (err) {
