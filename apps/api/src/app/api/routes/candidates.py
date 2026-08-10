@@ -11,7 +11,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
-from app.api.deps import CurrentUser, EmbeddingsDep, SessionDep, require_role
+from app.api.deps import CurrentUser, EmbeddingsDep, LLMDep, SessionDep, require_role
 from app.models.candidate import Candidate
 from app.models.enums import CandidateStatus, UserRole
 from app.models.user import User
@@ -25,6 +25,7 @@ from app.schemas.candidate import (
 from app.schemas.common import Page
 from app.services import audit
 from app.services import candidates as candidates_service
+from app.services import nl_search as nl_search_service
 from app.services import search as search_service
 
 router = APIRouter(tags=["candidates"])
@@ -111,6 +112,45 @@ async def search_candidates(
         status=status_,
         min_experience=min_experience,
         max_experience=max_experience,
+        limit=limit,
+        offset=offset,
+    )
+    return Page(
+        total=total,
+        items=[CandidateRead.model_validate(c) for c in items],
+        limit=limit,
+        offset=offset,
+    )
+
+
+@router.get(
+    "/nl-search",
+    response_model=Page[CandidateRead],
+    summary="Recherche en langage naturel",
+    description=(
+        "Traduit une requête libre (ex : « développeur senior à Casablanca 5 ans ») "
+        "en filtres structurés via le LLM, puis exécute la recherche hybride. "
+        "Requiert GROQ_API_KEY (ou GEMINI_API_KEY) en production ; "
+        "fonctionne sans clé en test via FakeLLMProvider."
+    ),
+)
+async def nl_search_candidates(
+    session: SessionDep,
+    embeddings: EmbeddingsDep,
+    llm: LLMDep,
+    _user: CurrentUser,
+    q: Annotated[
+        str,
+        Query(description="Requête en langage naturel (ex : « développeur senior à Casablanca »)."),
+    ],
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    offset: Annotated[int, Query(ge=0)] = 0,
+) -> Page[CandidateRead]:
+    total, items = await nl_search_service.nl_search(
+        session,
+        embeddings,
+        llm,
+        query=q,
         limit=limit,
         offset=offset,
     )
