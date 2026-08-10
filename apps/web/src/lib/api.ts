@@ -4,18 +4,26 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
 
 const TOKEN_KEY = "nscv_token";
+const REFRESH_TOKEN_KEY = "nscv_refresh_token";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem(TOKEN_KEY);
 }
 
-export function setToken(token: string): void {
-  window.localStorage.setItem(TOKEN_KEY, token);
+function getRefreshToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(REFRESH_TOKEN_KEY);
+}
+
+function setTokens(accessToken: string, refreshToken: string): void {
+  window.localStorage.setItem(TOKEN_KEY, accessToken);
+  window.localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 }
 
 export function clearToken(): void {
   window.localStorage.removeItem(TOKEN_KEY);
+  window.localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
 // --- Types (miroir des schémas Pydantic de l'API) ---
@@ -152,7 +160,37 @@ export class ApiError extends Error {
   }
 }
 
-async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+// Rafraîchissement de l'access token : dédupliqué (une seule requête /refresh
+// en vol même si plusieurs appels API échouent en 401 en même temps).
+let refreshInFlight: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return null;
+
+  if (!refreshInFlight) {
+    refreshInFlight = (async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/v1/auth/refresh`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+        if (!response.ok) return null;
+        const data = (await response.json()) as { access_token: string; refresh_token: string };
+        setTokens(data.access_token, data.refresh_token);
+        return data.access_token;
+      } catch {
+        return null;
+      } finally {
+        refreshInFlight = null;
+      }
+    })();
+  }
+  return refreshInFlight;
+}
+
+async function apiFetch<T>(path: string, options: RequestInit = {}, isRetry = false): Promise<T> {
   const token = getToken();
   const headers = new Headers(options.headers);
   if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -160,6 +198,12 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
   const response = await fetch(`${API_URL}${path}`, { ...options, headers });
 
   if (response.status === 401) {
+    // Access token expiré (30 min) : on tente un rafraîchissement transparent,
+    // une seule fois, avant d'abandonner et de renvoyer vers le login.
+    if (!isRetry) {
+      const newToken = await refreshAccessToken();
+      if (newToken) return apiFetch<T>(path, options, true);
+    }
     clearToken();
     throw new ApiError(401, "Session expirée, reconnecte-toi.");
   }
@@ -179,7 +223,7 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
 
 // --- Auth ---
 
-export async function login(email: string, password: string): Promise<string> {
+export async function login(email: string, password: string): Promise<void> {
   const body = new URLSearchParams({ username: email, password });
   const response = await fetch(`${API_URL}/api/v1/auth/login`, {
     method: "POST",
@@ -189,8 +233,24 @@ export async function login(email: string, password: string): Promise<string> {
   if (!response.ok) {
     throw new ApiError(response.status, "Email ou mot de passe incorrect.");
   }
-  const data = (await response.json()) as { access_token: string };
-  return data.access_token;
+  const data = (await response.json()) as { access_token: string; refresh_token: string };
+  setTokens(data.access_token, data.refresh_token);
+}
+
+export async function logout(): Promise<void> {
+  const refreshToken = getRefreshToken();
+  clearToken();
+  if (!refreshToken) return;
+  // Best-effort : la déconnexion locale ne doit pas dépendre du réseau.
+  try {
+    await fetch(`${API_URL}/api/v1/auth/logout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+  } catch {
+    /* déconnexion locale déjà faite */
+  }
 }
 
 export function fetchMe(): Promise<User> {

@@ -6,7 +6,9 @@ import pytest
 from app.core.security import (
     create_access_token,
     decode_access_token,
+    generate_refresh_token,
     hash_password,
+    hash_refresh_token,
     verify_password,
 )
 
@@ -44,3 +46,15 @@ def test_tampered_token_is_rejected():
     token = create_access_token(subject="abc-123", role="admin")
     with pytest.raises(jwt.PyJWTError):
         decode_access_token(token + "corrompu")
+
+
+def test_generate_refresh_token_is_unique_and_high_entropy():
+    a, b = generate_refresh_token(), generate_refresh_token()
+    assert a != b
+    assert len(a) > 40  # secrets.token_urlsafe(64) => bien plus long qu'un mot de passe
+
+
+def test_hash_refresh_token_is_deterministic_and_not_reversible():
+    token = generate_refresh_token()
+    assert hash_refresh_token(token) == hash_refresh_token(token)
+    assert hash_refresh_token(token) != token

@@ -9,6 +9,7 @@ from app.models.candidate import Candidate, Document
 from app.models.embedding import CandidateEmbedding
 from app.models.experience import Education, Experience, ExtraActivity
 from app.models.job import ImportJob, SyncState
+from app.models.refresh_token import RefreshToken
 from app.models.skill import CandidateLanguage, CandidateSkill, Skill
 from app.models.user import User
 
@@ -23,6 +24,7 @@ __all__ = [
     "Experience",
     "ExtraActivity",
     "ImportJob",
+    "RefreshToken",
     "Skill",
     "SyncState",
     "User",

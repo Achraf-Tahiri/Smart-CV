@@ -4,6 +4,8 @@ Ce module ne contient que des fonctions pures (aucune dépendance à la base ni
 à FastAPI) : il est donc simple à tester unitairement.
 """
 
+import hashlib
+import secrets
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -68,3 +70,23 @@ def create_access_token(
 def decode_access_token(token: str) -> dict[str, Any]:
     """Décode et vérifie un JWT. Lève `jwt.PyJWTError` si invalide ou expiré."""
     return jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+
+
+def generate_refresh_token() -> str:
+    """Génère un jeton de rafraîchissement opaque (haute entropie, non-JWT).
+
+    Contrairement à l'access token, il n'a pas besoin d'être auto-porteur : sa
+    validité est vérifiée en base (révocation possible), donc un secret aléatoire
+    suffit — c'est aussi ce qui le rend révocable immédiatement (contrairement à
+    un JWT, valide jusqu'à expiration même si "révoqué" côté métier).
+    """
+    return secrets.token_urlsafe(64)
+
+
+def hash_refresh_token(token: str) -> str:
+    """Hache un refresh token (SHA-256) pour stockage en base.
+
+    On ne stocke jamais le jeton en clair : un accès en lecture à la table
+    suffirait sinon à usurper n'importe quelle session.
+    """
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()

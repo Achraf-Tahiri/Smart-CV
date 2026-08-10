@@ -8,7 +8,7 @@ import {
   fetchMe,
   getToken,
   login as apiLogin,
-  setToken,
+  logout as apiLogout,
   type User,
 } from "@/lib/api";
 
@@ -37,13 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(email: string, password: string): Promise<void> {
-    const token = await apiLogin(email, password);
-    setToken(token);
+    await apiLogin(email, password);
     setUser(await fetchMe());
   }
 
   function logout(): void {
-    clearToken();
+    void apiLogout();
     setUser(null);
   }
 

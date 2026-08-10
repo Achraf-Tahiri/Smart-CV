@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     jwt_secret_key: str = "change-me-utiliser-une-longue-chaine-aleatoire"
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
+    # --- Refresh token (Phase 5c) ---
+    # Jeton opaque (non-JWT) stocké haché en base, révocable, avec rotation à l'usage.
+    refresh_token_expire_days: int = 30
 
     # --- CORS (le front est servi sur une autre origine que l'API) ---
     # Origines autorisées, séparées par des virgules.
