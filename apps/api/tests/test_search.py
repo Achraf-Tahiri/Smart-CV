@@ -17,7 +17,7 @@ async def _make_candidate(
     db_session, *, search_text, secteur, with_embedding=True, ville=None, nom=None
 ):
     candidate = Candidate(
-        prenom=search_text.split()[0],
+        prenom=(search_text.split()[0] if search_text.split() else None),
         nom=nom,
         secteur=secteur,
         ville=ville,
@@ -115,6 +115,21 @@ async def test_name_filter_order_independent(client, make_user, db_session):
     )
     body = resp.json()
     assert [item["id"] for item in body["items"]] == [str(target.id)]
+
+
+async def test_empty_search_text_excluded_from_vector_ranking(client, make_user, db_session):
+    # Un candidat au search_text vide a un embedding "générique" : il ne doit PAS
+    # remonter sur une requête libre (sinon il pollue le haut du classement).
+    empty = await _make_candidate(db_session, search_text="", secteur="Autre")
+    real = await _make_candidate(
+        db_session, search_text="Developpeur Python Django", secteur="Informatique / Tech"
+    )
+    headers = await _auth(client, make_user)
+
+    resp = await client.get("/api/v1/candidates/search", params={"q": "Python"}, headers=headers)
+    ids = [item["id"] for item in resp.json()["items"]]
+    assert str(empty.id) not in ids
+    assert str(real.id) in ids
 
 
 async def test_search_without_query_lists_all(client, make_user, db_session):

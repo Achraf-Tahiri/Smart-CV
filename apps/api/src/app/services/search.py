@@ -125,6 +125,10 @@ async def _vector_ids(session, embeddings: EmbeddingProvider, q: str, where, poo
     stmt = select(CandidateEmbedding.candidate_id).join(
         Candidate, Candidate.id == CandidateEmbedding.candidate_id
     )
+    # Les candidats sans texte indexable (search_text vide) ont un embedding
+    # « générique » qui polluerait le haut du classement sur les requêtes courtes
+    # ou cross-lingues -> on les exclut du ranking vectoriel.
+    stmt = stmt.where(func.length(func.trim(func.coalesce(Candidate.search_text, ""))) > 0)
     if where is not None:
         stmt = stmt.where(where)
     stmt = stmt.order_by(CandidateEmbedding.embedding.cosine_distance(query_vector)).limit(pool)
