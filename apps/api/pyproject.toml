@@ -29,6 +29,9 @@ dependencies = [
     "pytesseract>=0.3.13",        # OCR (nécessite le binaire tesseract dans l'image)
     "pillow>=10.4",               # images pour l'OCR
     "pdf2image>=1.17",            # PDF scannés -> images (nécessite poppler)
+    # --- Google Drive (Phase 3b) ---
+    "google-api-python-client>=2.140",  # client Drive v3
+    "google-auth>=2.34",                # compte de service (JSON base64 via env)
 ]
 
 [dependency-groups]
