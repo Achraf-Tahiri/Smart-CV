@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MenuIcon, PlusIcon } from "lucide-react";
 
@@ -30,7 +31,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar (bureau) */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar lg:flex">
         <div className="flex h-16 items-center border-b border-sidebar-border px-5">
-          <BrandWordmark />
+          <Link
+            href="/dashboard"
+            aria-label="Aller au tableau de bord"
+            className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <BrandWordmark />
+          </Link>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
@@ -61,7 +68,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <SheetContent side="left" className="w-72 p-0">
               <SheetHeader className="h-16 justify-center border-b border-sidebar-border px-5">
                 <SheetTitle className="p-0">
-                  <BrandWordmark />
+                  <Link
+                    href="/dashboard"
+                    aria-label="Aller au tableau de bord"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <BrandWordmark />
+                  </Link>
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3">
@@ -73,9 +86,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </SheetContent>
           </Sheet>
 
-          <div className="lg:hidden">
+          <Link
+            href="/dashboard"
+            aria-label="Aller au tableau de bord"
+            className="lg:hidden"
+          >
             <BrandWordmark />
-          </div>
+          </Link>
 
           <div className="ml-auto flex items-center gap-1.5">
             {showNew && (
