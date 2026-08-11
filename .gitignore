@@ -18,6 +18,17 @@ build/
 .turbo/
 *-debug.log*
 
+# ---- Tests front (apps/web) ----
+coverage/
+test-results/
+playwright-report/
+.playwright/
+blob-report/
+
+# ---- pnpm : cache local + lockfile non figé (build web = `pnpm install`) ----
+.pnpm-store/
+pnpm-lock.yaml
+
 # ---- Environnement & secrets ----
 .env
 .env.*
