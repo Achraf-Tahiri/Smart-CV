@@ -71,9 +71,14 @@ export default function LoginPage() {
 
         <div className="relative flex items-center gap-2.5">
           <BrandIcon className="bg-primary-foreground/15" />
-          <span className="font-display text-lg font-semibold tracking-tight">
-            Smart CV
-          </span>
+          <div className="flex flex-col leading-none">
+            <span className="font-display text-lg font-semibold tracking-tight">
+              Smart CV
+            </span>
+            <span className="mt-1 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.14em] text-primary-foreground/70">
+              Un projet par Achraf Tahiri
+            </span>
+          </div>
         </div>
 
         <div className="relative flex flex-col gap-6">

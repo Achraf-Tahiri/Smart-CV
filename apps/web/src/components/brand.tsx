@@ -14,18 +14,29 @@ export function BrandIcon({ className }: { className?: string }) {
   );
 }
 
-/** Bloc logo + nom + baseline, utilisé dans la sidebar et l'écran de connexion. */
-export function BrandWordmark({ className }: { className?: string }) {
+/** Bloc logo + nom (compact), utilisé dans la sidebar et l'en-tête mobile.
+ *  La baseline « Un projet par Achraf Tahiri » (≈261 px) ne tient pas
+ *  dans la sidebar (w-64) ni le tiroir mobile → activable via `tagline` seulement
+ *  dans les contextes larges (ex. panneau du login). */
+export function BrandWordmark({
+  className,
+  tagline = false,
+}: {
+  className?: string;
+  tagline?: boolean;
+}) {
   return (
     <div className={cn("flex items-center gap-2.5", className)}>
       <BrandIcon />
       <div className="flex flex-col leading-none">
-        <span className="font-display text-[15px] font-semibold tracking-tight text-foreground">
+        <span className="whitespace-nowrap font-display text-[15px] font-semibold tracking-tight text-foreground">
           Smart <span className="text-primary">CV</span>
         </span>
-        <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-          Un projet par Achraf Tahiri
-        </span>
+        {tagline && (
+          <span className="mt-1 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Un projet par Achraf Tahiri
+          </span>
+        )}
       </div>
     </div>
   );
