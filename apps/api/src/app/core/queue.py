@@ -26,3 +26,9 @@ async def enqueue_process_document(document_id: str) -> None:
     """Met en file le traitement IA d'un document."""
     pool = await get_pool()
     await pool.enqueue_job("process_document_task", document_id)
+
+
+async def enqueue_drive_sync(folder_id: str) -> None:
+    """Met en file une synchro Google Drive (folder Drive → catalogue + ingestion)."""
+    pool = await get_pool()
+    await pool.enqueue_job("sync_drive_folder_task", folder_id)

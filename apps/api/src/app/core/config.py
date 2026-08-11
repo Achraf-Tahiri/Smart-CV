@@ -93,6 +93,13 @@ class Settings(BaseSettings):
     # Sous ce nombre de caractères extraits d'un PDF, on bascule en OCR (PDF scanné).
     ocr_min_chars: int = 50
 
+    # --- Google Drive (Phase 3b) ---
+    # JSON du compte de service, encodé en **base64** (jamais écrit sur disque :
+    # les secrets restent en variable d'environnement / secret manager).
+    google_drive_service_account_json: str = ""
+    # Dossier Drive par défaut à synchroniser (peut être surchargé par requête).
+    google_drive_folder_id: str = ""
+
     # --- Embeddings (Phase 2.3) ---
     # "deterministic" (défaut, sans torch, non sémantique) | "sentence-transformers".
     embeddings_backend: str = "deterministic"
