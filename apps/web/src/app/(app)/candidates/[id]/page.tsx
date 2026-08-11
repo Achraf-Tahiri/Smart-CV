@@ -425,7 +425,9 @@ export default function CandidateDetailPage() {
                     value={
                       candidate.experience_texte ??
                       (candidate.annees_experience > 0
-                        ? `${candidate.annees_experience} an(s)`
+                        ? candidate.annees_experience < 1
+                          ? "< 1 an"
+                          : `${Math.round(candidate.annees_experience)} an(s)`
                         : null)
                     }
                   />

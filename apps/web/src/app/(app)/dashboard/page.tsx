@@ -16,6 +16,7 @@ const STATUS_LABELS: Record<string, string> = {
   processing: "En traitement",
   success: "Traité",
   manual_review: "À vérifier",
+  failed: "Échoué",
 };
 
 // ── Couleur de barre par statut (token bg-status-*-foreground) ────────────────
@@ -24,6 +25,7 @@ const STATUS_BAR_COLOR: Record<string, string> = {
   processing: "bg-status-processing-foreground",
   success: "bg-status-success-foreground",
   manual_review: "bg-status-review-foreground",
+  failed: "bg-destructive",
 };
 
 // ── Carte de répartition avec barres CSS ──────────────────────────────────────

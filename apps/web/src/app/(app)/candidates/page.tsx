@@ -38,8 +38,11 @@ function initials(c: Candidate): string {
 }
 
 function expLabel(c: Candidate): string | null {
-  if (c.annees_experience > 0) {
-    return `${c.annees_experience} an${c.annees_experience > 1 ? "s" : ""} d'exp.`;
+  const y = c.annees_experience;
+  if (y > 0) {
+    if (y < 1) return "< 1 an d'exp.";
+    const r = Math.round(y);
+    return `${r} an${r > 1 ? "s" : ""} d'exp.`;
   }
   return c.experience_texte ?? null;
 }
