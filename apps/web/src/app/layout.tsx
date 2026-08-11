@@ -1,24 +1,57 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import type { ReactNode } from "react";
 
-import { Nav } from "@/components/Nav";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 import { AuthProvider } from "./providers";
 
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "New Smart CV",
-  description: "Gestion et recherche de CV pour le recrutement",
+  title: "Smart CV — Gestion des candidatures",
+  description: "Gestion et recherche de CV pour le recrutement — Smart CV.",
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfcf9" },
+    { media: "(prefers-color-scheme: dark)", color: "#10152b" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr">
-      <body className="min-h-screen bg-gray-50 text-gray-900">
-        <AuthProvider>
-          <Nav />
-          <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
-        </AuthProvider>
+    <html
+      lang="fr"
+      suppressHydrationWarning
+      className={`${inter.variable} ${spaceGrotesk.variable} ${jetBrainsMono.variable}`}
+    >
+      <body className="min-h-svh bg-background font-sans text-foreground antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            {children}
+            <Toaster position="bottom-right" richColors />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

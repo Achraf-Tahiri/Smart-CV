@@ -1,1 +1,192 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Mapping des variables de marque vers les utilitaires Tailwind v4.
+   Design system Smart CV ; les teintes viennent de
+   docs/brand-design-tokens.css (vert lime 128° + marine 268°). */
+@theme inline {
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+
+  /* Statuts de traitement */
+  --color-status-pending: var(--status-pending);
+  --color-status-pending-foreground: var(--status-pending-foreground);
+  --color-status-processing: var(--status-processing);
+  --color-status-processing-foreground: var(--status-processing-foreground);
+  --color-status-success: var(--status-success);
+  --color-status-success-foreground: var(--status-success-foreground);
+  --color-status-review: var(--status-review);
+  --color-status-review-foreground: var(--status-review-foreground);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+/* Utilitaire : police d'affichage (titres) */
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+/* ===========================================================================
+   Smart CV — design tokens (marque : vert lime + bleu marine)
+   Vert primaire #8ABC3C (128°) · Marine #1B2340 / #232B45 (268°)
+   Le vert est lumineux → texte FONCÉ (marine) sur surfaces primaires.
+   =========================================================================== */
+:root {
+  color-scheme: light;
+  --background: oklch(0.985 0.003 120);
+  --foreground: oklch(0.24 0.03 268);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.03 268);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.03 268);
+
+  --primary: oklch(0.735 0.164 128); /* #8ABC3C */
+  --primary-foreground: oklch(0.24 0.035 268); /* marine, texte sur vert */
+
+  --secondary: oklch(0.965 0.006 130);
+  --secondary-foreground: oklch(0.3 0.03 268);
+  --muted: oklch(0.965 0.006 130);
+  --muted-foreground: oklch(0.52 0.02 268);
+  --accent: oklch(0.95 0.04 128); /* vert très clair */
+  --accent-foreground: oklch(0.44 0.12 130); /* vert foncé */
+  --destructive: oklch(0.577 0.222 27.5);
+
+  --border: oklch(0.912 0.006 130);
+  --input: oklch(0.9 0.008 130);
+  --ring: oklch(0.735 0.164 128);
+
+  --chart-1: oklch(0.735 0.164 128); /* vert marque */
+  --chart-2: oklch(0.55 0.09 250); /* marine */
+  --chart-3: oklch(0.7 0.14 190);
+  --chart-4: oklch(0.72 0.15 60);
+  --chart-5: oklch(0.63 0.12 300);
+
+  --radius: 0.7rem;
+
+  --sidebar: oklch(0.99 0.003 130);
+  --sidebar-foreground: oklch(0.24 0.03 268);
+  --sidebar-primary: oklch(0.735 0.164 128);
+  --sidebar-primary-foreground: oklch(0.24 0.035 268);
+  --sidebar-accent: oklch(0.95 0.04 128);
+  --sidebar-accent-foreground: oklch(0.44 0.12 130);
+  --sidebar-border: oklch(0.912 0.006 130);
+  --sidebar-ring: oklch(0.735 0.164 128);
+
+  --status-pending: oklch(0.955 0.01 130);
+  --status-pending-foreground: oklch(0.45 0.02 268);
+  --status-processing: oklch(0.93 0.05 235);
+  --status-processing-foreground: oklch(0.45 0.15 250);
+  --status-success: oklch(0.93 0.06 155);
+  --status-success-foreground: oklch(0.44 0.11 158);
+  --status-review: oklch(0.94 0.06 75);
+  --status-review-foreground: oklch(0.5 0.13 55);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.19 0.028 268); /* marine profond */
+  --foreground: oklch(0.955 0.006 130);
+  --card: oklch(0.235 0.03 268);
+  --card-foreground: oklch(0.955 0.006 130);
+  --popover: oklch(0.245 0.03 268);
+  --popover-foreground: oklch(0.955 0.006 130);
+
+  --primary: oklch(0.8 0.17 128); /* vert lumineux */
+  --primary-foreground: oklch(0.2 0.04 268); /* marine */
+
+  --secondary: oklch(0.29 0.03 268);
+  --secondary-foreground: oklch(0.955 0.006 130);
+  --muted: oklch(0.28 0.028 268);
+  --muted-foreground: oklch(0.72 0.02 130);
+  --accent: oklch(0.34 0.06 150);
+  --accent-foreground: oklch(0.9 0.1 128);
+  --destructive: oklch(0.7 0.19 22);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.8 0.17 128);
+
+  --chart-1: oklch(0.8 0.17 128);
+  --chart-2: oklch(0.68 0.1 250);
+  --chart-3: oklch(0.74 0.13 190);
+  --chart-4: oklch(0.78 0.14 65);
+  --chart-5: oklch(0.7 0.13 300);
+
+  --sidebar: oklch(0.215 0.028 268);
+  --sidebar-foreground: oklch(0.955 0.006 130);
+  --sidebar-primary: oklch(0.8 0.17 128);
+  --sidebar-primary-foreground: oklch(0.2 0.04 268);
+  --sidebar-accent: oklch(0.34 0.06 150);
+  --sidebar-accent-foreground: oklch(0.9 0.1 128);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.8 0.17 128);
+
+  --status-pending: oklch(0.3 0.015 268);
+  --status-pending-foreground: oklch(0.78 0.015 130);
+  --status-processing: oklch(0.34 0.08 250);
+  --status-processing-foreground: oklch(0.82 0.11 240);
+  --status-success: oklch(0.33 0.07 158);
+  --status-success-foreground: oklch(0.82 0.13 158);
+  --status-review: oklch(0.36 0.08 70);
+  --status-review-foreground: oklch(0.85 0.13 80);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--primary) 22%, transparent);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}
