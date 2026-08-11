@@ -7,6 +7,8 @@ Réutilise exactement la même logique que le traitement synchrone
 
 import uuid
 
+from arq import cron
+
 from app.core.config import settings
 from app.core.logging import configure_logging, get_logger
 from app.core.queue import redis_settings
@@ -15,7 +17,7 @@ from app.models.candidate import Document
 from app.providers.embeddings import get_embeddings
 from app.providers.llm import get_llm
 from app.providers.storage import get_storage
-from app.services import ingestion
+from app.services import gdpr, ingestion
 
 logger = get_logger("worker")
 
@@ -39,6 +41,32 @@ async def process_document_task(ctx: dict, document_id: str) -> str:
         return candidate.status.value
 
 
+async def purge_expired_candidates_task(ctx: dict) -> str:
+    """Tâche cron (RGPD) : purge en cascade les candidats hors rétention.
+
+    ⚠️ IRRÉVERSIBLE. No-op si RETENTION_DAYS <= 0 (désactivée par défaut).
+    Les CV migrés du POC sont exclus par le service. Chaque suppression écrit
+    une entrée d'audit `candidate.purge`.
+    """
+    if settings.retention_days <= 0:
+        logger.info("purge_disabled", retention_days=settings.retention_days)
+        return "disabled"
+    async with AsyncSessionLocal() as session:
+        purged = await gdpr.purge_expired_candidates(
+            session,
+            retention_days=settings.retention_days,
+            batch_limit=settings.retention_purge_batch_limit,
+            actor_id=None,  # exécution automatique (pas d'utilisateur)
+        )
+        await session.commit()
+    logger.info(
+        "purge_done",
+        retention_days=settings.retention_days,
+        purged=len(purged),
+    )
+    return f"purged={len(purged)}"
+
+
 async def _on_startup(ctx: dict) -> None:
     configure_logging(settings.log_level, json_logs=not settings.is_local)
     logger.info("worker_started")
@@ -48,5 +76,8 @@ class WorkerSettings:
     """Configuration lue par la commande `arq`."""
 
     functions = [process_document_task]
+    # Purge RGPD quotidienne à 03:30 (heure creuse). No-op tant que
+    # RETENTION_DAYS=0 : la planification est inerte tant qu'on ne l'active pas.
+    cron_jobs = [cron(purge_expired_candidates_task, hour=3, minute=30)]
     redis_settings = redis_settings()
     on_startup = _on_startup

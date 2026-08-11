@@ -48,6 +48,17 @@ class Settings(BaseSettings):
     login_max_attempts: int = 10  # échecs tolérés par IP avant blocage temporaire
     login_window_seconds: int = 300  # fenêtre de comptage (5 min)
 
+    # --- RGPD : rétention / purge automatique (Phase 5) ---
+    # Ancienneté (en jours, calculée sur `created_at`) au-delà de laquelle un
+    # candidat et TOUTES ses données liées sont purgés en cascade (droit à
+    # l'effacement / minimisation). ⚠️ La purge est IRRÉVERSIBLE.
+    # 0 = purge DÉSACTIVÉE (défaut prudent). Les CV migrés du POC (marqueur
+    # `_poc_id`) sont exclus de la purge quelle que soit la valeur.
+    retention_days: int = 0
+    # Borne de sécurité : nombre maximum de candidats supprimés par exécution
+    # (protège contre une purge massive due à une mauvaise configuration).
+    retention_purge_batch_limit: int = 100
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
