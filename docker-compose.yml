@@ -13,6 +13,13 @@ x-api-base: &api-base
     DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-nscv}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-nscv}
     S3_ENDPOINT_URL: http://minio:9000
     REDIS_URL: redis://redis:6379/0
+    # Cache HuggingFace persistant (évite de re-télécharger le modèle
+    # d'embeddings ~1 Go à chaque démarrage). Le volume nommé `hf-cache` est
+    # partagé entre `api` et `worker`.
+    HF_HOME: /hf-cache
+    SENTENCE_TRANSFORMERS_HOME: /hf-cache
+  volumes:
+    - hf-cache:/hf-cache
   depends_on:
     postgres:
       condition: service_healthy
@@ -92,3 +99,4 @@ services:
 volumes:
   postgres-data:
   minio-data:
+  hf-cache:

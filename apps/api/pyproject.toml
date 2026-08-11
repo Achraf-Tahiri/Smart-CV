@@ -32,6 +32,12 @@ dependencies = [
     # --- Google Drive (Phase 3b) ---
     "google-api-python-client>=2.140",  # client Drive v3
     "google-auth>=2.34",                # compte de service (JSON base64 via env)
+    # --- Embeddings sémantiques (Phase 2) ---
+    # Tire torch (~2 Go image), import paresseux : activé seulement si
+    # EMBEDDINGS_BACKEND=sentence-transformers. Défaut = provider déterministe.
+    # torch : version CPU explicite pour éviter ~4 Go de wheels CUDA inutiles.
+    "torch>=2.3",
+    "sentence-transformers>=3.0",
 ]
 
 [dependency-groups]
@@ -46,6 +52,15 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+# torch CPU-only (évite ~4 Go de wheels CUDA inutiles pour l'inférence CPU).
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 # Le package Python `app` vit dans src/ (layout « src »).
 [tool.hatch.build.targets.wheel]
