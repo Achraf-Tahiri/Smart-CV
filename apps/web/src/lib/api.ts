@@ -261,6 +261,7 @@ export function fetchMe(): Promise<User> {
 
 export interface SearchParams {
   q?: string;
+  name?: string;
   secteur?: string;
   ville?: string;
   seniorite?: string;

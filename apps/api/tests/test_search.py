@@ -13,9 +13,12 @@ pytestmark = pytest.mark.anyio
 _EMB = DeterministicEmbeddingProvider(768)
 
 
-async def _make_candidate(db_session, *, search_text, secteur, with_embedding=True, ville=None):
+async def _make_candidate(
+    db_session, *, search_text, secteur, with_embedding=True, ville=None, nom=None
+):
     candidate = Candidate(
         prenom=search_text.split()[0],
+        nom=nom,
         secteur=secteur,
         ville=ville,
         status=CandidateStatus.success,
@@ -80,6 +83,38 @@ async def test_search_with_sector_filter(client, make_user, db_session):
     body = resp.json()
     ids = [item["id"] for item in body["items"]]
     assert ids == [str(b.id)]  # seul le candidat Finance passe le filtre
+
+
+async def test_name_filter_matches_only_that_candidate(client, make_user, db_session):
+    # Beaucoup de candidats "bruit" avec embeddings : sans filtre nom, la branche
+    # vectorielle les remonterait tous. Le filtre nom doit isoler le bon.
+    for i in range(5):
+        await _make_candidate(db_session, search_text=f"Bruit{i}", secteur="Autre", nom=f"Zzz{i}")
+    target = await _make_candidate(
+        db_session, search_text="Marie", secteur="Informatique / Tech", nom="Dupont"
+    )
+    headers = await _auth(client, make_user)
+
+    resp = await client.get("/api/v1/candidates/search", params={"name": "Dupont"}, headers=headers)
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["total"] == 1
+    assert body["items"][0]["id"] == str(target.id)
+
+
+async def test_name_filter_order_independent(client, make_user, db_session):
+    target = await _make_candidate(
+        db_session, search_text="Marie", secteur="Informatique / Tech", nom="Dupont"
+    )
+    await _make_candidate(db_session, search_text="Jean", secteur="Autre", nom="Martin")
+    headers = await _auth(client, make_user)
+
+    # "Dupont Marie" (ordre inversé) doit tout de même matcher "Marie Dupont".
+    resp = await client.get(
+        "/api/v1/candidates/search", params={"name": "Dupont Marie"}, headers=headers
+    )
+    body = resp.json()
+    assert [item["id"] for item in body["items"]] == [str(target.id)]
 
 
 async def test_search_without_query_lists_all(client, make_user, db_session):

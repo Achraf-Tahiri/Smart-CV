@@ -15,7 +15,7 @@ function candidateName(c: Candidate): string {
 
 export default function CandidatesPage() {
   const { user } = useRequireAuth();
-  const [q, setQ] = useState("");
+  const [name, setName] = useState("");
   const [secteur, setSecteur] = useState("");
   const [ville, setVille] = useState("");
   const [minExp, setMinExp] = useState("");
@@ -29,7 +29,7 @@ export default function CandidatesPage() {
       setError(null);
       try {
         const result = await searchCandidates({
-          q: q || undefined,
+          name: name || undefined,
           secteur: secteur || undefined,
           ville: ville || undefined,
           min_experience: minExp ? Number(minExp) : undefined,
@@ -43,7 +43,7 @@ export default function CandidatesPage() {
         setLoading(false);
       }
     },
-    [q, secteur, ville, minExp],
+    [name, secteur, ville, minExp],
   );
 
   useEffect(() => {
@@ -80,9 +80,9 @@ export default function CandidatesPage() {
 
       <form onSubmit={onSubmit} className="grid grid-cols-1 gap-3 rounded-lg border bg-white p-4 sm:grid-cols-5">
         <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Rechercher (poste, compétence, nom…)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Nom du candidat"
           className="rounded border px-3 py-2 sm:col-span-2"
         />
         <select

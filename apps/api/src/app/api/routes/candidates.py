@@ -93,6 +93,9 @@ async def search_candidates(
     q: Annotated[
         str | None, Query(description="Requête libre (mots-clés, poste, compétence...).")
     ] = None,
+    name: Annotated[
+        str | None, Query(description="Filtre nom précis (prénom + nom, ordre libre).")
+    ] = None,
     secteur: str | None = None,
     ville: str | None = None,
     seniorite: str | None = None,
@@ -106,6 +109,7 @@ async def search_candidates(
         session,
         embeddings,
         q=q,
+        name=name,
         secteur=secteur,
         ville=ville,
         seniorite=seniorite,

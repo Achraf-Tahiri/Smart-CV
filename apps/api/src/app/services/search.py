@@ -27,8 +27,14 @@ def _build_filters(
     status: CandidateStatus | None,
     min_experience: float | None,
     max_experience: float | None,
+    name: str | None = None,
 ) -> list:
     conditions = []
+    # Filtre nom précis (prénom + nom) : chaque mot doit apparaître, ordre libre.
+    if name and name.strip():
+        full_name = func.concat_ws(" ", Candidate.prenom, Candidate.nom)
+        for token in name.split():
+            conditions.append(full_name.ilike(f"%{token}%"))
     if secteur:
         conditions.append(Candidate.secteur == secteur)
     if ville:
@@ -49,6 +55,7 @@ async def hybrid_search(
     embeddings: EmbeddingProvider,
     *,
     q: str | None = None,
+    name: str | None = None,
     secteur: str | None = None,
     ville: str | None = None,
     seniorite: str | None = None,
@@ -60,7 +67,9 @@ async def hybrid_search(
     pool: int = 100,
 ) -> tuple[int, list[Candidate]]:
     """Retourne (total, candidats de la page), classés par pertinence si `q`."""
-    conditions = _build_filters(secteur, ville, seniorite, status, min_experience, max_experience)
+    conditions = _build_filters(
+        secteur, ville, seniorite, status, min_experience, max_experience, name
+    )
     where = and_(*conditions) if conditions else None
 
     # Pas de texte -> simple listing filtré (les plus récents d'abord).
