@@ -309,7 +309,7 @@ export default function CandidateDetailPage() {
                         {/* Dot sur le filet */}
                         <span
                           aria-hidden
-                          className="absolute left-1.5 top-2 size-2 rounded-full bg-primary/60 ring-2 ring-card"
+                          className="absolute -left-[18px] top-2 size-2 rounded-full bg-primary/60 ring-2 ring-card"
                         />
                         <div className="text-sm font-semibold text-foreground">
                           {e.poste || "Poste non renseigné"}
