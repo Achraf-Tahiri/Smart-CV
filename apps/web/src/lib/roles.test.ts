@@ -36,7 +36,7 @@ describe("roles — initials", () => {
   });
 
   it("retombe sur l'email quand le nom est vide ou null (2 premiers tokens)", () => {
-    expect(initials(null, "achraf@example.com")).toBe("AE");
+    expect(initials(null, "prenom@example.com")).toBe("PE");
     expect(initials("   ", "bob.smith@example.com")).toBe("BS");
   });
 

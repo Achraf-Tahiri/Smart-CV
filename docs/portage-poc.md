@@ -1,7 +1,7 @@
 # Spécification de portage — logique métier du POC « Smart CV »
 
 > Ce document décrit **fidèlement** la logique métier du POC Streamlit
-> (`/home/achraf/Downloads/Projet CV/Smart_CV/`) à porter dans la nouvelle app
+> (`Smart_CV/`, à la racine du dépôt d'origine) à porter dans la nouvelle app
 > FastAPI (Phase 2). Les numéros de ligne renvoient au code du POC. Il sert de
 > référence pour porter le métier **sans relire le POC**, et signale les **bugs à
 > ne PAS reproduire**.
