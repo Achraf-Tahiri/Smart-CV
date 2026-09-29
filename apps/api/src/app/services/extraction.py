@@ -52,7 +52,7 @@ RÈGLES :
 1. "secteur" : choisis OBLIGATOIREMENT une valeur EXACTE de la liste ci-dessus.
 2. Dates en "YYYY-MM" (ou "YYYY"). "Depuis 2023" -> date_debut="2023", date_fin="PRESENT".
    ATTENTION : "2023-2024" signifie fin=2024, PAS "PRESENT". Ne mets JAMAIS de mois par défaut.
-3. SÉPARATION STRICTE : Bénévolat / Associatif / Club (Association Démo, JCI, Rotaract...) vont dans
+3. SÉPARATION STRICTE : Bénévolat / Associatif / Club (clubs étudiants, associations...) vont dans
    "activites_extra", PAS dans "experiences".
 4. SÉPARATION FORMATION/EXPÉRIENCE : tout diplôme (Bac, Licence, Master, Ingénieur, Doctorat)
    et toute certification vont dans "formations". Seuls stages, emplois et freelance vont dans

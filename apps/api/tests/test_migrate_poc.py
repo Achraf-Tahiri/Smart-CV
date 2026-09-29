@@ -24,7 +24,9 @@ def test_poc_row_to_extraction():
                         "date_fin": "PRESENT",
                     }
                 ],
-                "formations": [{"diplome": "Licence", "ecole": "Institut Exemple", "annee": "2019"}],
+                "formations": [
+                    {"diplome": "Licence", "ecole": "Institut Exemple", "annee": "2019"}
+                ],
                 "activites_extra": [],
             }
         ),

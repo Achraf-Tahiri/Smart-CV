@@ -3,9 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Mapping des variables de marque vers les utilitaires Tailwind v4.
-   Design system Smart CV ; les teintes viennent de
-   docs/brand-design-tokens.css (vert lime 128° + marine 268°). */
+/* Smart CV design tokens mapped to Tailwind utilities. */
 @theme inline {
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -66,51 +64,47 @@
   font-family: var(--font-display);
 }
 
-/* ===========================================================================
-   Smart CV — design tokens (marque : vert lime + bleu marine)
-   Vert primaire #8ABC3C (128°) · Marine #1B2340 / #232B45 (268°)
-   Le vert est lumineux → texte FONCÉ (marine) sur surfaces primaires.
-   =========================================================================== */
+/* Smart CV — indigo, cyan, and slate. */
 :root {
   color-scheme: light;
-  --background: oklch(0.985 0.003 120);
-  --foreground: oklch(0.24 0.03 268);
+  --background: #f8fafc;
+  --foreground: #172554;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.24 0.03 268);
+  --card-foreground: #172554;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.24 0.03 268);
+  --popover-foreground: #172554;
 
-  --primary: oklch(0.735 0.164 128); /* #8ABC3C */
-  --primary-foreground: oklch(0.24 0.035 268); /* marine, texte sur vert */
+  --primary: #4f46e5;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.965 0.006 130);
-  --secondary-foreground: oklch(0.3 0.03 268);
-  --muted: oklch(0.965 0.006 130);
-  --muted-foreground: oklch(0.52 0.02 268);
-  --accent: oklch(0.95 0.04 128); /* vert très clair */
-  --accent-foreground: oklch(0.44 0.12 130); /* vert foncé */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #334155;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #eef2ff;
+  --accent-foreground: #4338ca;
   --destructive: oklch(0.577 0.222 27.5);
 
-  --border: oklch(0.912 0.006 130);
-  --input: oklch(0.9 0.008 130);
-  --ring: oklch(0.735 0.164 128);
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --ring: #4f46e5;
 
-  --chart-1: oklch(0.735 0.164 128); /* vert marque */
-  --chart-2: oklch(0.55 0.09 250); /* marine */
+  --chart-1: #4f46e5;
+  --chart-2: oklch(0.55 0.09 250);
   --chart-3: oklch(0.7 0.14 190);
   --chart-4: oklch(0.72 0.15 60);
   --chart-5: oklch(0.63 0.12 300);
 
   --radius: 0.7rem;
 
-  --sidebar: oklch(0.99 0.003 130);
-  --sidebar-foreground: oklch(0.24 0.03 268);
-  --sidebar-primary: oklch(0.735 0.164 128);
-  --sidebar-primary-foreground: oklch(0.24 0.035 268);
-  --sidebar-accent: oklch(0.95 0.04 128);
-  --sidebar-accent-foreground: oklch(0.44 0.12 130);
-  --sidebar-border: oklch(0.912 0.006 130);
-  --sidebar-ring: oklch(0.735 0.164 128);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #172554;
+  --sidebar-primary: #4f46e5;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef2ff;
+  --sidebar-accent-foreground: #4338ca;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #4f46e5;
 
   --status-pending: oklch(0.955 0.01 130);
   --status-pending-foreground: oklch(0.45 0.02 268);
@@ -124,42 +118,42 @@
 
 .dark {
   color-scheme: dark;
-  --background: oklch(0.19 0.028 268); /* marine profond */
-  --foreground: oklch(0.955 0.006 130);
-  --card: oklch(0.235 0.03 268);
-  --card-foreground: oklch(0.955 0.006 130);
-  --popover: oklch(0.245 0.03 268);
-  --popover-foreground: oklch(0.955 0.006 130);
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #172033;
+  --card-foreground: #f1f5f9;
+  --popover: #1e293b;
+  --popover-foreground: #f1f5f9;
 
-  --primary: oklch(0.8 0.17 128); /* vert lumineux */
-  --primary-foreground: oklch(0.2 0.04 268); /* marine */
+  --primary: #a5b4fc;
+  --primary-foreground: #0f172a;
 
-  --secondary: oklch(0.29 0.03 268);
-  --secondary-foreground: oklch(0.955 0.006 130);
-  --muted: oklch(0.28 0.028 268);
-  --muted-foreground: oklch(0.72 0.02 130);
-  --accent: oklch(0.34 0.06 150);
-  --accent-foreground: oklch(0.9 0.1 128);
+  --secondary: #253149;
+  --secondary-foreground: #f1f5f9;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #252d57;
+  --accent-foreground: #c7d2fe;
   --destructive: oklch(0.7 0.19 22);
 
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.8 0.17 128);
+  --ring: #a5b4fc;
 
-  --chart-1: oklch(0.8 0.17 128);
+  --chart-1: #a5b4fc;
   --chart-2: oklch(0.68 0.1 250);
   --chart-3: oklch(0.74 0.13 190);
   --chart-4: oklch(0.78 0.14 65);
   --chart-5: oklch(0.7 0.13 300);
 
-  --sidebar: oklch(0.215 0.028 268);
-  --sidebar-foreground: oklch(0.955 0.006 130);
-  --sidebar-primary: oklch(0.8 0.17 128);
-  --sidebar-primary-foreground: oklch(0.2 0.04 268);
-  --sidebar-accent: oklch(0.34 0.06 150);
-  --sidebar-accent-foreground: oklch(0.9 0.1 128);
+  --sidebar: #111b2e;
+  --sidebar-foreground: #f1f5f9;
+  --sidebar-primary: #a5b4fc;
+  --sidebar-primary-foreground: #0f172a;
+  --sidebar-accent: #252d57;
+  --sidebar-accent-foreground: #c7d2fe;
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.8 0.17 128);
+  --sidebar-ring: #a5b4fc;
 
   --status-pending: oklch(0.3 0.015 268);
   --status-pending-foreground: oklch(0.78 0.015 130);

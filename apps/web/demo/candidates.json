@@ -1,0 +1,756 @@
+[
+  {
+    "id": "00000000-0000-4000-8000-000000000001",
+    "prenom": "Camille",
+    "nom": "Exemple",
+    "email": "candidate-01@example.com",
+    "telephone": null,
+    "ville": "Casablanca",
+    "poste_actuel": "Développeuse full stack",
+    "secteur": "Informatique / Tech",
+    "specialite": "Applications web",
+    "annees_experience": 5,
+    "experience_texte": "5 ans",
+    "seniorite": "Intermédiaire",
+    "status": "success",
+    "source": "local",
+    "created_at": "2026-09-01T09:00:00Z",
+    "updated_at": "2026-09-20T14:30:00Z",
+    "experiences": [
+      {
+        "id": "00000000-0000-4000-8000-000000000001-exp1",
+        "poste": "Développeuse full stack",
+        "entreprise": "Studio Exemple — société fictive",
+        "date_debut": "2023-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Conception de produits numériques accessibles. Développement de fonctionnalités, revue de code et collaboration au sein d’une équipe produit fictive."
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000001-exp2",
+        "poste": "Développeuse web",
+        "entreprise": "Atelier Démo — société fictive",
+        "date_debut": "2021-09",
+        "date_fin": "2022-12",
+        "is_current": false,
+        "description": "Création d’interfaces web et intégration d’API. Exemple de parcours inventé pour la démonstration."
+      }
+    ],
+    "educations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000001-edu",
+        "diplome": "Master informatique",
+        "ecole": "Institut Exemple — établissement fictif",
+        "annee": 2021,
+        "description": null
+      }
+    ],
+    "activites_extra": [
+      {
+        "id": "00000000-0000-4000-8000-000000000001-act",
+        "titre": "Mentorat bénévole",
+        "organisation": "Collectif Démo — association fictive",
+        "date_debut": "2024-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Ateliers de découverte du développement web. Activité fictive."
+      }
+    ],
+    "skills": [
+      {
+        "id": "00000000-0000-4000-8000-000000000001-skill-0",
+        "name": "TypeScript",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000001-skill-1",
+        "name": "React",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000001-skill-2",
+        "name": "Python",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000001-skill-3",
+        "name": "PostgreSQL",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000001-soft",
+        "name": "Travail en équipe",
+        "type": "soft"
+      }
+    ],
+    "langues": [
+      {
+        "id": "00000000-0000-4000-8000-000000000001-fr",
+        "name": "Français",
+        "level": "Courant"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000001-en",
+        "name": "Anglais",
+        "level": "Professionnel"
+      }
+    ],
+    "documents": []
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000002",
+    "prenom": "Alex",
+    "nom": "Démo",
+    "email": "candidate-02@example.com",
+    "telephone": null,
+    "ville": "Rabat",
+    "poste_actuel": "Data engineer",
+    "secteur": "Informatique / Tech",
+    "specialite": null,
+    "annees_experience": 7,
+    "experience_texte": "7 ans",
+    "seniorite": "Senior",
+    "status": "success",
+    "source": "local",
+    "created_at": "2026-09-01T09:00:00Z",
+    "updated_at": "2026-09-20T14:30:00Z",
+    "experiences": [
+      {
+        "id": "00000000-0000-4000-8000-000000000002-exp1",
+        "poste": "Data engineer",
+        "entreprise": "Studio Exemple — société fictive",
+        "date_debut": "2023-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Conception de produits numériques accessibles. Développement de fonctionnalités, revue de code et collaboration au sein d’une équipe produit fictive."
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000002-exp2",
+        "poste": "Data engineer",
+        "entreprise": "Atelier Démo — société fictive",
+        "date_debut": "2021-09",
+        "date_fin": "2022-12",
+        "is_current": false,
+        "description": "Création d’interfaces web et intégration d’API. Exemple de parcours inventé pour la démonstration."
+      }
+    ],
+    "educations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000002-edu",
+        "diplome": "Diplôme de spécialisation",
+        "ecole": "Institut Exemple — établissement fictif",
+        "annee": 2021,
+        "description": null
+      }
+    ],
+    "activites_extra": [
+      {
+        "id": "00000000-0000-4000-8000-000000000002-act",
+        "titre": "Mentorat bénévole",
+        "organisation": "Collectif Démo — association fictive",
+        "date_debut": "2024-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Ateliers de découverte du développement web. Activité fictive."
+      }
+    ],
+    "skills": [
+      {
+        "id": "00000000-0000-4000-8000-000000000002-skill-0",
+        "name": "Python",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000002-skill-1",
+        "name": "SQL",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000002-skill-2",
+        "name": "Airflow",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000002-skill-3",
+        "name": "Docker",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000002-soft",
+        "name": "Travail en équipe",
+        "type": "soft"
+      }
+    ],
+    "langues": [
+      {
+        "id": "00000000-0000-4000-8000-000000000002-fr",
+        "name": "Français",
+        "level": "Courant"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000002-en",
+        "name": "Anglais",
+        "level": "Professionnel"
+      }
+    ],
+    "documents": []
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000003",
+    "prenom": "Sam",
+    "nom": "Exemple",
+    "email": "candidate-03@example.com",
+    "telephone": null,
+    "ville": "Lyon",
+    "poste_actuel": "Product designer",
+    "secteur": "Art / Design / Création",
+    "specialite": null,
+    "annees_experience": 4,
+    "experience_texte": "4 ans",
+    "seniorite": "Intermédiaire",
+    "status": "success",
+    "source": "local",
+    "created_at": "2026-09-01T09:00:00Z",
+    "updated_at": "2026-09-20T14:30:00Z",
+    "experiences": [
+      {
+        "id": "00000000-0000-4000-8000-000000000003-exp1",
+        "poste": "Product designer",
+        "entreprise": "Studio Exemple — société fictive",
+        "date_debut": "2023-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Conception de produits numériques accessibles. Développement de fonctionnalités, revue de code et collaboration au sein d’une équipe produit fictive."
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000003-exp2",
+        "poste": "Product designer",
+        "entreprise": "Atelier Démo — société fictive",
+        "date_debut": "2021-09",
+        "date_fin": "2022-12",
+        "is_current": false,
+        "description": "Création d’interfaces web et intégration d’API. Exemple de parcours inventé pour la démonstration."
+      }
+    ],
+    "educations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000003-edu",
+        "diplome": "Diplôme de spécialisation",
+        "ecole": "Institut Exemple — établissement fictif",
+        "annee": 2021,
+        "description": null
+      }
+    ],
+    "activites_extra": [
+      {
+        "id": "00000000-0000-4000-8000-000000000003-act",
+        "titre": "Mentorat bénévole",
+        "organisation": "Collectif Démo — association fictive",
+        "date_debut": "2024-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Ateliers de découverte du développement web. Activité fictive."
+      }
+    ],
+    "skills": [
+      {
+        "id": "00000000-0000-4000-8000-000000000003-skill-0",
+        "name": "Figma",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000003-skill-1",
+        "name": "Design systems",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000003-skill-2",
+        "name": "Prototypage",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000003-soft",
+        "name": "Travail en équipe",
+        "type": "soft"
+      }
+    ],
+    "langues": [
+      {
+        "id": "00000000-0000-4000-8000-000000000003-fr",
+        "name": "Français",
+        "level": "Courant"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000003-en",
+        "name": "Anglais",
+        "level": "Professionnel"
+      }
+    ],
+    "documents": []
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000004",
+    "prenom": "Robin",
+    "nom": "Démo",
+    "email": "candidate-04@example.com",
+    "telephone": null,
+    "ville": "Paris",
+    "poste_actuel": "Responsable marketing",
+    "secteur": "Marketing / Communication",
+    "specialite": null,
+    "annees_experience": 8,
+    "experience_texte": "8 ans",
+    "seniorite": "Senior",
+    "status": "success",
+    "source": "local",
+    "created_at": "2026-09-01T09:00:00Z",
+    "updated_at": "2026-09-20T14:30:00Z",
+    "experiences": [
+      {
+        "id": "00000000-0000-4000-8000-000000000004-exp1",
+        "poste": "Responsable marketing",
+        "entreprise": "Studio Exemple — société fictive",
+        "date_debut": "2023-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Conception de produits numériques accessibles. Développement de fonctionnalités, revue de code et collaboration au sein d’une équipe produit fictive."
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000004-exp2",
+        "poste": "Responsable marketing",
+        "entreprise": "Atelier Démo — société fictive",
+        "date_debut": "2021-09",
+        "date_fin": "2022-12",
+        "is_current": false,
+        "description": "Création d’interfaces web et intégration d’API. Exemple de parcours inventé pour la démonstration."
+      }
+    ],
+    "educations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000004-edu",
+        "diplome": "Diplôme de spécialisation",
+        "ecole": "Institut Exemple — établissement fictif",
+        "annee": 2021,
+        "description": null
+      }
+    ],
+    "activites_extra": [
+      {
+        "id": "00000000-0000-4000-8000-000000000004-act",
+        "titre": "Mentorat bénévole",
+        "organisation": "Collectif Démo — association fictive",
+        "date_debut": "2024-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Ateliers de découverte du développement web. Activité fictive."
+      }
+    ],
+    "skills": [
+      {
+        "id": "00000000-0000-4000-8000-000000000004-skill-0",
+        "name": "SEO",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000004-skill-1",
+        "name": "Analytics",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000004-skill-2",
+        "name": "Stratégie",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000004-soft",
+        "name": "Travail en équipe",
+        "type": "soft"
+      }
+    ],
+    "langues": [
+      {
+        "id": "00000000-0000-4000-8000-000000000004-fr",
+        "name": "Français",
+        "level": "Courant"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000004-en",
+        "name": "Anglais",
+        "level": "Professionnel"
+      }
+    ],
+    "documents": []
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000005",
+    "prenom": "Charlie",
+    "nom": "Exemple",
+    "email": "candidate-05@example.com",
+    "telephone": null,
+    "ville": "Tanger",
+    "poste_actuel": "Analyste financier",
+    "secteur": "Finance / Banque / Assurance",
+    "specialite": null,
+    "annees_experience": 2,
+    "experience_texte": "2 ans",
+    "seniorite": "Junior",
+    "status": "manual_review",
+    "source": "local",
+    "created_at": "2026-09-01T09:00:00Z",
+    "updated_at": "2026-09-20T14:30:00Z",
+    "experiences": [
+      {
+        "id": "00000000-0000-4000-8000-000000000005-exp1",
+        "poste": "Analyste financier",
+        "entreprise": "Studio Exemple — société fictive",
+        "date_debut": "2023-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Conception de produits numériques accessibles. Développement de fonctionnalités, revue de code et collaboration au sein d’une équipe produit fictive."
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000005-exp2",
+        "poste": "Analyste financier",
+        "entreprise": "Atelier Démo — société fictive",
+        "date_debut": "2021-09",
+        "date_fin": "2022-12",
+        "is_current": false,
+        "description": "Création d’interfaces web et intégration d’API. Exemple de parcours inventé pour la démonstration."
+      }
+    ],
+    "educations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000005-edu",
+        "diplome": "Diplôme de spécialisation",
+        "ecole": "Institut Exemple — établissement fictif",
+        "annee": 2021,
+        "description": null
+      }
+    ],
+    "activites_extra": [
+      {
+        "id": "00000000-0000-4000-8000-000000000005-act",
+        "titre": "Mentorat bénévole",
+        "organisation": "Collectif Démo — association fictive",
+        "date_debut": "2024-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Ateliers de découverte du développement web. Activité fictive."
+      }
+    ],
+    "skills": [
+      {
+        "id": "00000000-0000-4000-8000-000000000005-skill-0",
+        "name": "Excel",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000005-skill-1",
+        "name": "Power BI",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000005-skill-2",
+        "name": "SQL",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000005-soft",
+        "name": "Travail en équipe",
+        "type": "soft"
+      }
+    ],
+    "langues": [
+      {
+        "id": "00000000-0000-4000-8000-000000000005-fr",
+        "name": "Français",
+        "level": "Courant"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000005-en",
+        "name": "Anglais",
+        "level": "Professionnel"
+      }
+    ],
+    "documents": []
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000006",
+    "prenom": "Lou",
+    "nom": "Démo",
+    "email": "candidate-06@example.com",
+    "telephone": null,
+    "ville": "Bordeaux",
+    "poste_actuel": "Ingénieure DevOps",
+    "secteur": "Informatique / Tech",
+    "specialite": null,
+    "annees_experience": 6,
+    "experience_texte": "6 ans",
+    "seniorite": "Senior",
+    "status": "success",
+    "source": "local",
+    "created_at": "2026-09-01T09:00:00Z",
+    "updated_at": "2026-09-20T14:30:00Z",
+    "experiences": [
+      {
+        "id": "00000000-0000-4000-8000-000000000006-exp1",
+        "poste": "Ingénieure DevOps",
+        "entreprise": "Studio Exemple — société fictive",
+        "date_debut": "2023-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Conception de produits numériques accessibles. Développement de fonctionnalités, revue de code et collaboration au sein d’une équipe produit fictive."
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000006-exp2",
+        "poste": "Ingénieure DevOps",
+        "entreprise": "Atelier Démo — société fictive",
+        "date_debut": "2021-09",
+        "date_fin": "2022-12",
+        "is_current": false,
+        "description": "Création d’interfaces web et intégration d’API. Exemple de parcours inventé pour la démonstration."
+      }
+    ],
+    "educations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000006-edu",
+        "diplome": "Diplôme de spécialisation",
+        "ecole": "Institut Exemple — établissement fictif",
+        "annee": 2021,
+        "description": null
+      }
+    ],
+    "activites_extra": [
+      {
+        "id": "00000000-0000-4000-8000-000000000006-act",
+        "titre": "Mentorat bénévole",
+        "organisation": "Collectif Démo — association fictive",
+        "date_debut": "2024-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Ateliers de découverte du développement web. Activité fictive."
+      }
+    ],
+    "skills": [
+      {
+        "id": "00000000-0000-4000-8000-000000000006-skill-0",
+        "name": "Kubernetes",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000006-skill-1",
+        "name": "Terraform",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000006-skill-2",
+        "name": "Linux",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000006-soft",
+        "name": "Travail en équipe",
+        "type": "soft"
+      }
+    ],
+    "langues": [
+      {
+        "id": "00000000-0000-4000-8000-000000000006-fr",
+        "name": "Français",
+        "level": "Courant"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000006-en",
+        "name": "Anglais",
+        "level": "Professionnel"
+      }
+    ],
+    "documents": []
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000007",
+    "prenom": "Morgan",
+    "nom": "Exemple",
+    "email": "candidate-07@example.com",
+    "telephone": null,
+    "ville": "Marrakech",
+    "poste_actuel": "Chargé de recrutement",
+    "secteur": "Ressources Humaines",
+    "specialite": null,
+    "annees_experience": 3,
+    "experience_texte": "3 ans",
+    "seniorite": "Intermédiaire",
+    "status": "processing",
+    "source": "local",
+    "created_at": "2026-09-01T09:00:00Z",
+    "updated_at": "2026-09-20T14:30:00Z",
+    "experiences": [
+      {
+        "id": "00000000-0000-4000-8000-000000000007-exp1",
+        "poste": "Chargé de recrutement",
+        "entreprise": "Studio Exemple — société fictive",
+        "date_debut": "2023-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Conception de produits numériques accessibles. Développement de fonctionnalités, revue de code et collaboration au sein d’une équipe produit fictive."
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000007-exp2",
+        "poste": "Chargé de recrutement",
+        "entreprise": "Atelier Démo — société fictive",
+        "date_debut": "2021-09",
+        "date_fin": "2022-12",
+        "is_current": false,
+        "description": "Création d’interfaces web et intégration d’API. Exemple de parcours inventé pour la démonstration."
+      }
+    ],
+    "educations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000007-edu",
+        "diplome": "Diplôme de spécialisation",
+        "ecole": "Institut Exemple — établissement fictif",
+        "annee": 2021,
+        "description": null
+      }
+    ],
+    "activites_extra": [
+      {
+        "id": "00000000-0000-4000-8000-000000000007-act",
+        "titre": "Mentorat bénévole",
+        "organisation": "Collectif Démo — association fictive",
+        "date_debut": "2024-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Ateliers de découverte du développement web. Activité fictive."
+      }
+    ],
+    "skills": [
+      {
+        "id": "00000000-0000-4000-8000-000000000007-skill-0",
+        "name": "Sourcing",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000007-skill-1",
+        "name": "Entretiens",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000007-skill-2",
+        "name": "Communication",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000007-soft",
+        "name": "Travail en équipe",
+        "type": "soft"
+      }
+    ],
+    "langues": [
+      {
+        "id": "00000000-0000-4000-8000-000000000007-fr",
+        "name": "Français",
+        "level": "Courant"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000007-en",
+        "name": "Anglais",
+        "level": "Professionnel"
+      }
+    ],
+    "documents": []
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000008",
+    "prenom": "Noa",
+    "nom": "Démo",
+    "email": "candidate-08@example.com",
+    "telephone": null,
+    "ville": "Nantes",
+    "poste_actuel": "Développeur frontend",
+    "secteur": "Informatique / Tech",
+    "specialite": null,
+    "annees_experience": 1,
+    "experience_texte": "1 ans",
+    "seniorite": "Junior",
+    "status": "pending",
+    "source": "local",
+    "created_at": "2026-09-01T09:00:00Z",
+    "updated_at": "2026-09-20T14:30:00Z",
+    "experiences": [
+      {
+        "id": "00000000-0000-4000-8000-000000000008-exp1",
+        "poste": "Développeur frontend",
+        "entreprise": "Studio Exemple — société fictive",
+        "date_debut": "2023-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Conception de produits numériques accessibles. Développement de fonctionnalités, revue de code et collaboration au sein d’une équipe produit fictive."
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000008-exp2",
+        "poste": "Développeur frontend",
+        "entreprise": "Atelier Démo — société fictive",
+        "date_debut": "2021-09",
+        "date_fin": "2022-12",
+        "is_current": false,
+        "description": "Création d’interfaces web et intégration d’API. Exemple de parcours inventé pour la démonstration."
+      }
+    ],
+    "educations": [
+      {
+        "id": "00000000-0000-4000-8000-000000000008-edu",
+        "diplome": "Diplôme de spécialisation",
+        "ecole": "Institut Exemple — établissement fictif",
+        "annee": 2021,
+        "description": null
+      }
+    ],
+    "activites_extra": [
+      {
+        "id": "00000000-0000-4000-8000-000000000008-act",
+        "titre": "Mentorat bénévole",
+        "organisation": "Collectif Démo — association fictive",
+        "date_debut": "2024-01",
+        "date_fin": null,
+        "is_current": true,
+        "description": "Ateliers de découverte du développement web. Activité fictive."
+      }
+    ],
+    "skills": [
+      {
+        "id": "00000000-0000-4000-8000-000000000008-skill-0",
+        "name": "JavaScript",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000008-skill-1",
+        "name": "React",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000008-skill-2",
+        "name": "CSS",
+        "type": "hard"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000008-soft",
+        "name": "Travail en équipe",
+        "type": "soft"
+      }
+    ],
+    "langues": [
+      {
+        "id": "00000000-0000-4000-8000-000000000008-fr",
+        "name": "Français",
+        "level": "Courant"
+      },
+      {
+        "id": "00000000-0000-4000-8000-000000000008-en",
+        "name": "Anglais",
+        "level": "Professionnel"
+      }
+    ],
+    "documents": []
+  }
+]

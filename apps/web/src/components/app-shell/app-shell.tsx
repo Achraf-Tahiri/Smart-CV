@@ -109,6 +109,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
 
         <main className="flex-1">
+          {process.env.NEXT_PUBLIC_PREVIEW_MODE === "true" && (
+            <div role="note" className="border-b border-indigo-200 bg-indigo-50 px-6 py-2.5 text-center text-xs font-medium text-indigo-800 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-200">
+              Démonstration · Données entièrement fictives · Lecture seule
+            </div>
+          )}
           <div className="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-8">
             {children}
           </div>

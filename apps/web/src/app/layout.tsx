@@ -22,14 +22,16 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Smart CV — Gestion des candidatures",
+  icons: { icon: "/smart-cv-icon.svg" },
+  authors: [{ name: "Achraf Tahiri", url: "https://github.com/Achraf-Tahiri" }],
   description: "Gestion et recherche de CV pour le recrutement — Smart CV.",
 };
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfcf9" },
-    { media: "(prefers-color-scheme: dark)", color: "#10152b" },
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
   ],
 };
 

@@ -6,6 +6,13 @@ on:
   pull_request:
 
 jobs:
+  repository:
+    name: Public-file guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/check_public_repo.py
+
   api:
     name: API — lint + tests
     runs-on: ubuntu-latest
@@ -43,11 +50,15 @@ jobs:
         run: uv run ruff check src tests
       - name: Format (black --check)
         run: uv run black --check src tests
+      - name: Install OCR system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-fra tesseract-ocr-eng poppler-utils fonts-dejavu-core
       - name: Tests (pytest)
         run: uv run pytest
 
   web:
-    name: Web — build
+    name: Web — tests + build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -62,5 +73,7 @@ jobs:
           node-version: 24
       - name: Installer les dépendances
         run: pnpm install --no-frozen-lockfile
+      - name: Unit tests
+        run: pnpm test
       - name: Build
         run: pnpm build

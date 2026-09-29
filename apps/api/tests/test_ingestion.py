@@ -46,7 +46,12 @@ EXTRACTION = {
     ],
     "formations": [{"diplome": "Ingénieur", "ecole": "Institut Exemple", "annee": "2019"}],
     "activites_extra": [
-        {"titre": "Président", "organisation": "Association Démo", "date_debut": "2018", "date_fin": "2019"}
+        {
+            "titre": "Président",
+            "organisation": "Association Démo",
+            "date_debut": "2018",
+            "date_fin": "2019",
+        }
     ],
     "hard_skills": ["py", "Docker"],
     "soft_skills": ["autonome"],

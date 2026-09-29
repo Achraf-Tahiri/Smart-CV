@@ -138,6 +138,13 @@ export default function LoginPage() {
             </div>
           )}
 
+          {process.env.NEXT_PUBLIC_PREVIEW_MODE === "true" && (
+            <div role="note" className="mb-5 rounded-lg border border-primary/20 bg-accent p-3 text-xs leading-relaxed text-accent-foreground">
+              Démonstration avec des profils fictifs.<br />
+              Email : demo@example.com · Mot de passe : demo-only
+            </div>
+          )}
+
           <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Adresse e-mail</Label>

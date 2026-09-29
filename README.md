@@ -1,195 +1,178 @@
+<p align="center">
+  <img src="apps/web/public/smart-cv-icon.svg" width="64" height="64" alt="Smart CV logo" />
+</p>
+
 # Smart CV
 
-A full-stack recruitment application that turns CV documents into searchable candidate profiles. Smart CV combines document parsing, OCR, structured information extraction, and hybrid search in a FastAPI backend with a Next.js interface.
+**A recruitment workspace that turns CV documents into structured, searchable profiles.**
 
-**Status:** working MVP under active development. The application interface is currently in French.
+A project by [Achraf Tahiri](https://github.com/Achraf-Tahiri).
 
-## Features
+[![CI](https://github.com/Achraf-Tahiri/Smart-CV/actions/workflows/ci.yml/badge.svg)](https://github.com/Achraf-Tahiri/Smart-CV/actions/workflows/ci.yml)
+![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)
+![Next.js 15](https://img.shields.io/badge/Next.js-15-111827?logo=nextdotjs)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white)
 
-- **Candidate management:** create, edit, browse, and delete profiles with work experience, education, skills, languages, and attached documents.
-- **Document ingestion:** upload CVs, detect duplicate files by content hash, store originals in MinIO, and process them asynchronously through an Arq/Redis worker.
-- **Text extraction and OCR:** extract text from PDF and DOCX files, with Tesseract support for scanned PDFs and images in French and English.
-- **Structured CV extraction:** validate extracted information with Pydantic and use a configurable fallback chain of Groq, Gemini, and Hugging Face providers.
-- **Search:** filter candidates by name, city, sector, and experience; combine PostgreSQL full-text search with pgvector similarity search. A natural-language search endpoint is also available through the API.
-- **Dashboard:** view candidate totals and breakdowns by processing status, seniority, and sector.
-- **Authentication and permissions:** JWT access tokens, rotating refresh tokens, login rate limiting, and administrator, recruiter, and reader roles.
-- **Google Drive integration:** queue folder imports through administrator API endpoints, with duplicate detection and retry handling.
-- **Audit and data management:** audit logs, per-candidate data export, and configurable retention with a preview mode. Automatic deletion is disabled by default.
+![Smart CV — from documents to candidate insights](docs/images/cover.svg)
 
-## Tech stack
+[Screenshots](#screenshots) · [Try the preview](#try-the-preview) · [Architecture](#architecture) · [Run the full application](#run-the-full-application) · [Development guide](docs/DEVELOPMENT.md)
 
-| Layer | Technologies |
+## What it does
+
+Smart CV brings document ingestion, candidate management, and search into one workspace.
+Upload a CV, follow its background processing, review the extracted profile, and find
+candidates using structured filters or hybrid text and vector search.
+
+| Workflow | Implementation |
 | --- | --- |
-| Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS, shadcn/ui, Radix UI |
-| API | Python 3.12+, FastAPI, Pydantic v2, SQLAlchemy 2 async |
-| Database | PostgreSQL 16, pgvector, Alembic |
-| Background jobs | Arq, Redis |
-| Document storage | MinIO / S3-compatible storage |
-| Extraction | pdfplumber, python-docx, Tesseract, configurable LLM providers |
-| Embeddings | sentence-transformers, multilingual-e5-base, CPU PyTorch |
-| Testing | pytest, Vitest, Testing Library, Playwright |
-| Tooling | Docker Compose, uv, pnpm, Ruff, Black, GitHub Actions |
+| **Collect** | PDF, DOCX, and image uploads; content-hash deduplication; MinIO document storage |
+| **Process** | Redis/Arq background jobs, French and English OCR, structured extraction with provider fallback |
+| **Organize** | Candidate profiles with experience, education, skills, languages, and processing status |
+| **Find** | Name and attribute filters, PostgreSQL full-text search, pgvector similarity, natural-language API search |
+| **Manage** | Role-based access, rotating refresh tokens, audit logs, data export, optional retention, and Google Drive imports |
 
-## Architecture
+**Status:** working MVP under active development. The interface is currently in French.
+The screenshots and preview below contain **only fictional candidates**. No real CVs or
+candidate databases are included. See [demo data and repository hygiene](docs/PRIVACY.md).
 
-The frontend calls the FastAPI API for authentication, candidate management, search, and document uploads. Original documents are stored in MinIO; candidate records and search indexes live in PostgreSQL.
+## Screenshots
 
-Document processing runs outside the HTTP request cycle. The API queues a job in Redis, and an Arq worker extracts text, parses the CV into structured data, normalizes the profile, and stores its search embedding. The frontend follows the candidate's processing status.
+These are captures of the actual application interface, connected to the isolated,
+read-only fixture server. Counts and profiles are synthetic, not production metrics.
 
-External integrations are grouped behind provider interfaces for language models, embeddings, storage, and Google Drive. Tests use local substitutes for these services where appropriate.
+### Workspace overview
 
-```text
-apps/
-  api/
-    src/app/
-      api/routes/       HTTP endpoints
-      core/             Configuration, logging, security, and job queue
-      db/               Database sessions and model base
-      domain/           Date normalization, experience calculation, taxonomies
-      models/           SQLAlchemy models
-      schemas/          Pydantic request and response schemas
-      providers/        Language models, embeddings, storage, and Google Drive
-      services/         Candidate, ingestion, search, and data management logic
-      scripts/          Admin setup, migration, retention, and re-embedding
-      worker.py         Background jobs and scheduled retention task
-    alembic/            Database migrations
-    tests/              Backend tests
-  web/
-    src/                Next.js pages, components, and API client
-    e2e/                Playwright smoke test
-infra/postgres/init/     PostgreSQL extension initialization
-docs/                   Domain migration notes and design tokens
-docker-compose.yml      Local application stack
-```
+![Dashboard with eight fictional candidate profiles and status, seniority, and sector breakdowns](docs/images/dashboard.png)
 
-## Quick start
+### Search and profile review
 
-### 1. Configure the environment
+| Candidate search | Structured profile |
+| --- | --- |
+| ![Candidate search with fictional profiles](docs/images/candidates.png) | ![Camille Exemple's fictional candidate profile](docs/images/candidate-profile.png) |
 
-Install Docker with the Docker Compose plugin, then clone the repository:
+<details>
+<summary>Sign-in screen and mobile navigation</summary>
+
+![Smart CV sign-in screen](docs/images/login.png)
+
+<img src="docs/images/mobile.png" width="300" alt="Mobile navigation in the synthetic preview" />
+
+</details>
+
+## Try the preview
+
+Explore the interface without Docker, a database, provider keys, or real candidate data.
+Requires **Node.js 24** and **pnpm 9**.
 
 ```bash
 git clone https://github.com/Achraf-Tahiri/Smart-CV.git
-cd Smart-CV
-cp .env.example .env
+cd Smart-CV/apps/web
+pnpm install
+pnpm preview:demo
 ```
 
-Edit `.env` before starting. Set your own `JWT_SECRET_KEY` and replace the example database and storage credentials. Add a provider API key if you want to enable structured CV extraction.
+Open **http://127.0.0.1:3105** and sign in with:
 
-### 2. Build and start the services
+- Email: `demo@example.com`
+- Password: `demo-only`
+
+The preview is read-only and uses eight invented profiles. Upload, extraction, and
+editing require the full application. Its fixture server binds to loopback and does
+not access PostgreSQL, Redis, MinIO, Google Drive, or language-model providers.
+[Preview details and screenshot reproduction →](apps/web/demo/README.md)
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Web["Next.js · React · TypeScript"] -->|REST / JWT| API["FastAPI"]
+    API -->|Profiles and search| DB[("PostgreSQL + pgvector")]
+    API -->|Original documents| Storage[("MinIO / S3")]
+    API -->|Enqueue jobs| Queue[("Redis")]
+    Queue --> Worker["Arq worker"]
+    Worker -->|Read documents| Storage
+    Worker --> Extract["Text extraction + Tesseract OCR"]
+    Extract --> LLM["Structured extraction<br/>Groq / Gemini / Hugging Face"]
+    LLM --> Normalize["Validation + normalization"]
+    Normalize --> Embed["sentence-transformers"]
+    Normalize -->|Candidate profile| DB
+    Embed -->|Search vectors| DB
+    Drive["Google Drive<br/>Optional import source"] --> Worker
+```
+
+**Why this structure:** background jobs keep document processing outside the HTTP
+request cycle. Provider interfaces isolate external services, while pure domain
+functions handle dates, experience calculation, and normalization. PostgreSQL stores
+both candidate records and search vectors, keeping retrieval in one database.
+
+## Run the full application
+
+Install Docker with the Compose plugin, then from the repository root:
 
 ```bash
+cp .env.example .env
+# Set your own JWT secret and database/storage credentials in .env.
 docker compose build
 docker compose up -d postgres redis minio
 docker compose run --rm -T api uv run --frozen alembic upgrade head
 docker compose run --rm -T api uv run --frozen \
   python -m app.scripts.create_admin \
-  --email admin@example.com \
-  --password 'replace-with-a-strong-password'
+  --email admin@example.com --password 'replace-with-a-strong-password'
 docker compose up -d api worker web
 ```
 
-The first build can take time because the backend includes OCR tools and CPU PyTorch. Re-running the admin command for an existing account resets its password and restores its administrator role.
-
-With the supplied `.env.example` defaults:
-
-| Service | Address |
+| Service | Default address |
 | --- | --- |
-| Web application | http://localhost:3000 |
-| Interactive API documentation | http://localhost:8000/docs |
+| Application | http://localhost:3000 |
+| API documentation | http://localhost:8000/docs |
 | MinIO console | http://localhost:9001 |
 
-Log in with the administrator credentials you set above. Create a candidate manually or upload a CV to start processing it.
+Add a supported provider key in `.env` for structured extraction. Without one,
+processing falls back to manual review. For semantic search, set
+`EMBEDDINGS_BACKEND=sentence-transformers`; the default deterministic backend is
+for testing and does not provide semantic similarity. Model downloads are cached.
 
-If ports 3000 or 8000 are already in use, change `WEB_PORT` and `API_PORT` in `.env`. Keep `CORS_ORIGINS` aligned with the frontend URL and rebuild the web image after changing the API port, since its API URL is embedded at build time.
+The first build includes OCR tools and CPU PyTorch and can take several minutes.
+The Compose stack is a local development setup. [Configuration, migrations, and troubleshooting →](docs/DEVELOPMENT.md)
 
-## Configuration
+## Engineering and verification
 
-See [`.env.example`](.env.example) for the available settings. Keep real credentials in your local `.env`, which is excluded from Git.
-
-| Setting | Purpose |
-| --- | --- |
-| `GROQ_API_KEY`, `GEMINI_API_KEY`, `HF_API_TOKEN` | Credentials for structured extraction and natural-language search providers |
-| `LLM_PROVIDER_ORDER` | Provider fallback order; defaults to `groq,gemini,hf` |
-| `GROQ_MODEL`, `GEMINI_MODEL`, `HF_MODEL` | Model identifiers for the configured providers |
-| `EMBEDDINGS_BACKEND` | `deterministic` for local testing or `sentence-transformers` for semantic search |
-| `EMBEDDINGS_MODEL` | Embedding model; defaults to `intfloat/multilingual-e5-base` |
-| `S3_PUBLIC_ENDPOINT_URL` | Browser-accessible storage URL used for signed downloads |
-| `GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON` | Base64-encoded Google service account JSON for Drive imports |
-| `GOOGLE_DRIVE_FOLDER_ID` | Default Drive folder to import |
-| `RETENTION_DAYS` | Candidate retention period; `0` disables automatic deletion |
-
-Without a configured extraction provider, documents can still be uploaded and stored, but processing falls back to manual review. Provider availability depends on your account and the configured model identifiers.
-
-The default deterministic embedding backend does **not** provide semantic similarity. Set `EMBEDDINGS_BACKEND=sentence-transformers` to enable semantic embeddings; the model is downloaded on first use and cached in the `hf-cache` Docker volume. After switching backends, rebuild existing candidate embeddings:
+- **Backend:** Python 3.12+, FastAPI, Pydantic v2, SQLAlchemy 2 async, Alembic.
+- **Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS, shadcn/ui, Radix UI.
+- **Tests:** pytest, Vitest, Testing Library, and Playwright.
+- **CI:** public-file guard, backend lint/format/tests with OCR dependencies, frontend tests and build.
 
 ```bash
-docker compose run --rm -T api uv run --frozen \
-  python -m app.scripts.reembed_candidates --dry-run
-docker compose run --rm -T api uv run --frozen \
-  python -m app.scripts.reembed_candidates
-```
-
-## Development and verification
-
-### Backend
-
-With the Docker images built and PostgreSQL running:
-
-```bash
-docker compose run --rm -T api uv run --frozen ruff check src tests
-docker compose run --rm -T api uv run --frozen black --check src tests
+# From the repository root, after building the API image:
 docker compose run --rm -T api uv run --frozen pytest
-```
+python3 scripts/check_public_repo.py
 
-Integration tests create and reset a dedicated database named `<database>_test`. Rebuild the API image after source changes when testing the container image.
-
-### Frontend
-
-For local frontend development, install Node.js 24 and pnpm 9, then run:
-
-```bash
-cd apps/web
-cp .env.local.example .env.local
-pnpm install
-pnpm dev
-```
-
-Keep `NEXT_PUBLIC_API_URL` in `.env.local` aligned with your running API. Stop the Compose web service first if you want the local development server to use the same port.
-
-```bash
+# From apps/web:
 pnpm test
 pnpm build
 ```
 
-The Playwright smoke test requires a running application, an administrator account, and at least one candidate:
+Backend integration tests use a separate test database. Screenshot checks exercise
+login, search, profile navigation, read-only permissions, and mobile layout against
+the synthetic preview. [Detailed test commands →](docs/DEVELOPMENT.md#development-and-verification)
 
-```bash
-pnpm exec playwright install chromium
-E2E_BASE_URL=http://localhost:3000 \
-E2E_ADMIN_EMAIL=admin@example.com \
-E2E_ADMIN_PASSWORD='your-test-account-password' \
-  pnpm test:e2e
+## Repository map
+
+```text
+apps/api/src/app/    Routes, domain logic, providers, services, and worker
+apps/api/tests/      Synthetic unit and integration fixtures
+apps/api/alembic/    Database migrations
+apps/web/src/        Pages, components, and typed API client
+apps/web/demo/       Fictional profiles for the isolated preview
+apps/web/scripts/    Preview server and screenshot capture
+docs/               Setup guide, privacy notes, and screenshots
+infra/postgres/     pgvector initialization
+scripts/            Public-repository guard
 ```
 
-GitHub Actions is configured to run backend linting, formatting checks, and tests, plus a frontend production build.
+## Roadmap
 
-## Migrating data from the original prototype
-
-An optional import script migrates already extracted candidate data from the original SQLite prototype into PostgreSQL:
-
-```bash
-docker compose run --rm -T \
-  -v "/path/to/Smart_CV/data:/poc:ro" \
-  api uv run --frozen python -m app.scripts.migrate_poc \
-  --sqlite /poc/cv_database.db
-```
-
-The import reads the source database without modifying it and can be re-run without creating duplicate candidates.
-
-## Next steps
-
-- Expand end-to-end test coverage for imports and candidate editing.
-- Improve bulk import controls and visibility into background jobs.
+- Expand end-to-end coverage for uploads and candidate editing.
+- Improve bulk import controls and background-job visibility.
 - Add an English application interface.
-- Prepare deployment documentation, performance checks, and further production hardening.
+- Document deployment and extend performance and production-hardening checks.

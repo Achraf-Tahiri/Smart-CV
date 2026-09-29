@@ -51,3 +51,21 @@ Thumbs.db
 .idea/
 .vscode/
 *.log
+
+# Private documents, exports, and local backups
+uploads/
+exports/
+backups/
+*.sqlite3
+*.sql.gz
+*.dump
+*.bak
+*.pdf
+*.doc
+*.docx
+*.xlsx
+*.xls
+*.csv
+*.tsbuildinfo
+next-env.d.ts
+.preview-next/
