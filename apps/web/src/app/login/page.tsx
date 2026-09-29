@@ -75,9 +75,6 @@ export default function LoginPage() {
             <span className="font-display text-lg font-semibold tracking-tight">
               Smart CV
             </span>
-            <span className="mt-1 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.14em] text-primary-foreground/70">
-              Un projet par Achraf Tahiri
-            </span>
           </div>
         </div>
 
@@ -107,7 +104,7 @@ export default function LoginPage() {
         </div>
 
         <p className="relative text-xs text-primary-foreground/60">
-          Smart CV — un projet par Achraf Tahiri.
+          Smart CV
         </p>
       </aside>
 

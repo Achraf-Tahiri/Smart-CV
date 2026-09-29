@@ -1,6 +1,7 @@
 [project]
 name = "new-smart-cv-api"
 version = "0.1.0"
+license = "MIT"
 description = "API New Smart CV — backend FastAPI (async)."
 requires-python = ">=3.12"
 dependencies = [

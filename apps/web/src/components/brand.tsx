@@ -9,9 +9,8 @@ export function BrandIcon({ className }: { className?: string }) {
   );
 }
 
-export function BrandWordmark({ className, tagline = true }: {
+export function BrandWordmark({ className }: {
   className?: string;
-  tagline?: boolean;
 }) {
   return (
     <div className={cn("flex items-center gap-2.5", className)}>
@@ -20,7 +19,6 @@ export function BrandWordmark({ className, tagline = true }: {
         <span className="whitespace-nowrap font-display text-[17px] font-semibold tracking-tight text-foreground">
           Smart <span className="text-primary">CV</span>
         </span>
-        {tagline && <span className="mt-1.5 text-[10px] font-medium tracking-wide text-muted-foreground">by Achraf Tahiri</span>}
       </div>
     </div>
   );

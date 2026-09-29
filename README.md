@@ -6,9 +6,8 @@
 
 **A recruitment workspace that turns CV documents into structured, searchable profiles.**
 
-A project by [Achraf Tahiri](https://github.com/Achraf-Tahiri).
-
 [![CI](https://github.com/Achraf-Tahiri/Smart-CV/actions/workflows/ci.yml/badge.svg)](https://github.com/Achraf-Tahiri/Smart-CV/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)
 ![Next.js 15](https://img.shields.io/badge/Next.js-15-111827?logo=nextdotjs)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white)
@@ -176,3 +175,11 @@ scripts/            Public-repository guard
 - Improve bulk import controls and background-job visibility.
 - Add an English application interface.
 - Document deployment and extend performance and production-hardening checks.
+
+## License
+
+Licensed under the [MIT License](LICENSE). Copyright © 2026 Achraf Tahiri.
+
+Third-party components retain their own licenses. See [third-party notices](THIRD_PARTY_NOTICES.md)
+for the UI components adapted from shadcn/ui; dependencies and external services
+remain subject to their respective license terms.

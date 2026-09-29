@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" fill="none">
   <title>Smart CV — from documents to candidate insights</title>
-  <desc>A recruitment workspace project by Achraf Tahiri, built with FastAPI, Next.js, and PostgreSQL.</desc>
+  <desc>A recruitment workspace built with FastAPI, Next.js, and PostgreSQL.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="360" gradientUnits="userSpaceOnUse"><stop stop-color="#111B3D"/><stop offset="1" stop-color="#312E81"/></linearGradient>
     <linearGradient id="card" x1="880" y1="60" x2="1150" y2="300" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#E0E7FF"/></linearGradient>
@@ -9,7 +9,7 @@
   <circle cx="1150" cy="350" r="240" stroke="#818CF8" stroke-opacity=".17"/>
   <circle cx="1150" cy="350" r="185" stroke="#818CF8" stroke-opacity=".17"/>
   <circle cx="1150" cy="350" r="130" stroke="#818CF8" stroke-opacity=".17"/>
-  <text x="60" y="68" fill="#A5B4FC" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="3">A PROJECT BY ACHRAF TAHIRI</text>
+  <text x="60" y="68" fill="#A5B4FC" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="3">RECRUITMENT WORKSPACE</text>
   <text x="57" y="149" fill="white" font-family="Arial, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Smart CV<tspan fill="#22D3EE">.</tspan></text>
   <text x="60" y="200" fill="#E0E7FF" font-family="Arial, sans-serif" font-size="25">From documents to candidate insights.</text>
   <text x="60" y="236" fill="#A5B4FC" font-family="Arial, sans-serif" font-size="16">Structured profiles. Background processing. Hybrid search.</text>
