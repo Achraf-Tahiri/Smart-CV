@@ -24,7 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/status-badge";
 import { cn } from "@/lib/utils";
 
-const LIMIT = 10;
+const LIMIT = 15;
 const ALL_SENTINEL = "__all__";
 
 function candidateName(c: Candidate): string {
@@ -273,11 +273,14 @@ export default function CandidatesPage() {
       {/* Résultats */}
       {data && !loading && (
         <>
-          <p className="text-sm text-muted-foreground">
-            {total === 0
-              ? "Aucun résultat"
-              : `${total} candidat${total > 1 ? "s" : ""}`}
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground" role="status">
+            <p>
+              {total === 0
+                ? "Aucun résultat"
+                : `${offset + 1}–${Math.min(offset + data.items.length, total)} sur ${total} candidat${total > 1 ? "s" : ""}`}
+            </p>
+            <p>{LIMIT} candidats par page</p>
+          </div>
 
           {data.items.length > 0 ? (
             <ul className="space-y-3">
@@ -299,7 +302,7 @@ export default function CandidatesPage() {
 
           {/* Pagination */}
           {total > LIMIT && (
-            <div className="flex items-center justify-between">
+            <nav aria-label="Pagination des candidats" className="flex flex-wrap items-center justify-between gap-3">
               <Button
                 type="button"
                 variant="outline"
@@ -310,7 +313,7 @@ export default function CandidatesPage() {
                 ← Précédent
               </Button>
               <span className="text-xs text-muted-foreground">
-                {total === 0 ? 0 : offset + 1}–{Math.min(offset + LIMIT, total)} sur {total}
+                Page {Math.floor(offset / LIMIT) + 1} sur {Math.ceil(total / LIMIT)}
               </span>
               <Button
                 type="button"
@@ -321,7 +324,7 @@ export default function CandidatesPage() {
               >
                 Suivant →
               </Button>
-            </div>
+            </nav>
           )}
         </>
       )}

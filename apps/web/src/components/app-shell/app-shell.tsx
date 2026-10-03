@@ -27,32 +27,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const showNew = !!user && canWrite(user.role);
 
   return (
-    <div className="min-h-svh bg-background">
+    <div className="min-h-svh bg-background lg:grid lg:grid-cols-[minmax(16rem,20%)_minmax(0,1fr)]">
       {/* Sidebar (bureau) */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar lg:flex">
-        <div className="flex h-16 items-center border-b border-sidebar-border px-5">
-          <Link
-            href="/dashboard"
-            aria-label="Aller au tableau de bord"
-            className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <BrandWordmark />
-          </Link>
-        </div>
-        <div className="flex-1 overflow-y-auto px-3 py-4">
-          <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-            Espace de travail
-          </p>
-          <SidebarNav />
-        </div>
-        <div className="border-t border-sidebar-border p-3">
-          <UserMenu />
+      <aside className="hidden min-w-0 border-r border-sidebar-border bg-sidebar lg:block">
+        <div className="sticky top-0 flex h-dvh flex-col">
+          <div className="flex h-16 shrink-0 items-center border-b border-sidebar-border px-5">
+            <Link
+              href="/dashboard"
+              aria-label="Aller au tableau de bord"
+              className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <BrandWordmark />
+            </Link>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto px-3 py-4">
+            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+              Espace de travail
+            </p>
+            <SidebarNav />
+          </div>
+          <div className="shrink-0 border-t border-sidebar-border p-3">
+            <UserMenu />
+          </div>
         </div>
       </aside>
 
       {/* Colonne principale */}
-      <div className="flex min-h-svh flex-col lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/70 md:px-6">
+      <div className="flex min-h-svh min-w-0 flex-col">
+        <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/70 md:px-6">
           {/* Menu mobile */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
@@ -65,8 +67,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <MenuIcon />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 p-0">
-              <SheetHeader className="h-16 justify-center border-b border-sidebar-border px-5">
+            <SheetContent side="left" className="h-dvh w-72 max-w-full gap-0 p-0">
+              <SheetHeader className="h-16 shrink-0 justify-center border-b border-sidebar-border px-5">
                 <SheetTitle className="p-0">
                   <Link
                     href="/dashboard"
@@ -77,11 +79,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </Link>
                 </SheetTitle>
               </SheetHeader>
-              <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3">
+              <div className="min-h-0 flex-1 overflow-y-auto p-3">
                 <SidebarNav onNavigate={() => setMobileOpen(false)} />
-                <div className="border-t border-sidebar-border pt-3">
-                  <UserMenu />
-                </div>
+              </div>
+              <div className="shrink-0 border-t border-sidebar-border p-3">
+                <UserMenu />
               </div>
             </SheetContent>
           </Sheet>
@@ -114,7 +116,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               Démonstration · Données entièrement fictives · Lecture seule
             </div>
           )}
-          <div className="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-8">
+          <div className="w-full px-4 py-6 md:px-6 md:py-8">
             {children}
           </div>
         </main>
