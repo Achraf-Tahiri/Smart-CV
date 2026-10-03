@@ -43,11 +43,13 @@ read-only fixture server. Counts and profiles are synthetic, not production metr
 
 ![Dashboard with eight fictional candidate profiles and status, seniority, and sector breakdowns](docs/images/dashboard.png)
 
-### Search and profile review
+### Candidate search
 
-| Candidate search | Structured profile |
-| --- | --- |
-| ![Candidate search with fictional profiles](docs/images/candidates.png) | ![Camille Exemple's fictional candidate profile](docs/images/candidate-profile.png) |
+![Candidate search with fictional profiles](docs/images/candidates.png)
+
+### Structured profile
+
+![Camille Exemple's fictional candidate profile](docs/images/candidate-profile.png)
 
 ### Sign-in screen
 
