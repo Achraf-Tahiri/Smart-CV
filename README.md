@@ -49,14 +49,9 @@ read-only fixture server. Counts and profiles are synthetic, not production metr
 | --- | --- |
 | ![Candidate search with fictional profiles](docs/images/candidates.png) | ![Camille Exemple's fictional candidate profile](docs/images/candidate-profile.png) |
 
-<details>
-<summary>Sign-in screen and mobile navigation</summary>
+### Sign-in screen
 
 ![Smart CV sign-in screen](docs/images/login.png)
-
-<img src="docs/images/mobile.png" width="300" alt="Mobile navigation in the synthetic preview" />
-
-</details>
 
 ## Try the preview
 
