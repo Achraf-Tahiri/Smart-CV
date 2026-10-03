@@ -103,13 +103,18 @@ try {
       "Candidates page must not overflow horizontally at zoomed viewport sizes");
   }
   await page.setViewportSize({ width: 1440, height: 900 });
+  await page.getByRole("heading", { name: "Candidats", exact: true }).click();
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: `${output}/candidates.png`, animations: "disabled" });
   await page.setViewportSize({ width: 1920, height: 1080 });
   const wideSidebar = await page.locator("aside").boundingBox();
   assert.ok(wideSidebar && Math.abs(wideSidebar.width - 384) < 1);
   await page.screenshot({ path: `${output}/candidates-wide.png`, animations: "disabled" });
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect(page.locator("aside").getByRole("button", { name: /Compte de démonstration/ })).toBeInViewport({ ratio: 1 });
+  await page.screenshot({ path: `${output}/candidates-scrolled.png`, animations: "disabled" });
   await page.setViewportSize({ width: 1440, height: 900 });
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.getByPlaceholder("Nom du candidat").fill("Camille");
   await page.getByRole("button", { name: "Rechercher", exact: true }).click();
   await page.getByText("Alex Démo", { exact: true }).waitFor({ state: "hidden" });
@@ -135,7 +140,7 @@ try {
   await page.screenshot({ path: `${output}/mobile.png`, animations: "disabled" });
   assert.deepEqual(blocked, [], "Unexpected network destination during capture");
   assert.deepEqual(errors, [], "Browser errors during preview");
-  console.log("Captured six screenshots; verified synthetic data, search, profile navigation, read-only access, desktop resizing, account visibility while scrolling, zoom-equivalent viewports, and mobile layout.");
+  console.log("Captured seven screenshots; verified synthetic data, search, profile navigation, read-only access, desktop resizing, account visibility while scrolling, zoom-equivalent viewports, and mobile layout.");
 } catch (error) {
   if (page) { console.error("Capture failed at", page.url(), await page.locator("body").innerText()); }
   throw error;

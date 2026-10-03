@@ -49,6 +49,21 @@ read-only fixture server. Counts and profiles are synthetic, not production metr
 | --- | --- |
 | ![Candidate search with fictional profiles](docs/images/candidates.png) | ![Camille Exemple's fictional candidate profile](docs/images/candidate-profile.png) |
 
+### Responsive sidebar
+
+The sidebar grows with the desktop viewport, and the account menu stays visible
+at the bottom of the window while the candidate list scrolls. Results are paginated
+at 15 candidates per page.
+
+![Candidate list on a 1920-pixel-wide screen with the responsive sidebar](docs/images/candidates-wide.png)
+
+<details>
+<summary>After scrolling the candidate list</summary>
+
+![Candidate list scrolled to the bottom, with navigation and account menu still visible](docs/images/candidates-scrolled.png)
+
+</details>
+
 <details>
 <summary>Sign-in screen and mobile navigation</summary>
 
